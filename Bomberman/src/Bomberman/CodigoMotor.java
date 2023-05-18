@@ -56,6 +56,11 @@ public class CodigoMotor {
 	static Image imagenBomba= Toolkit.getDefaultToolkit().getImage("Bomba.png");
 	Bomba bombas[] = new Bomba[10];
 	
+	//ENEMIGOS 
+	Enemigos enemigos[]= new Enemigos[4];
+	static Image imagenEnemigo= Toolkit.getDefaultToolkit().getImage("enemigo.png");
+	boolean moverEnemigo=true;
+	
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -79,7 +84,20 @@ public class CodigoMotor {
         	 explotarBomba();
         	
          }
-  };
+	};
+	 TimerTask moverEnemigos = new TimerTask() {
+         public void run() {
+        	 moverEnemigos();
+        	
+         }
+	};
+
+	TimerTask cambiarDireccionEnemiga = new TimerTask() {
+        public void run() {
+        	cambiarDireccionEnemiga();
+       	
+        }
+	};
 
 	public CodigoMotor() {
 		initialize();
@@ -125,7 +143,7 @@ public class CodigoMotor {
 									
 
 								}else {
-									System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
+									//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
 
 								
 								}
@@ -140,7 +158,7 @@ public class CodigoMotor {
 									
 
 								}else {
-									System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
+									//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
 
 								
 								}
@@ -274,11 +292,239 @@ public class CodigoMotor {
 	
 	}
 	
+	//esta funcion se le llama en la funcion crear enemigos y solo es para saber la cantidad de espacios vacios que hay en una fila
+	public int buscarCantidadEspaciosVacios(int fila) {
+		int cantEspaciosVacios=0;
+		for(int columna=0;columna<15;columna++) {
+			if(mapa[fila][columna].tipoBloque==0) {
+				cantEspaciosVacios++;
+			}
+		}
+		return cantEspaciosVacios;
+	}
+	public void crearEnemigos() {
+		//esta variable es pa saber si genero los 5 enemgios
+		int enemigosGenerados=0;
+		//espacio vacio se usa para saber en que bloque invisible osea en que espacio va a meter el enemigo
+		//si en una fila hay 3 espacios vacios, esta variable generara un valor aleatorio y dira cual de los 3 espacios metera al enemigo
+		int espacioVacio=0;
+		
+
+			//evaluamos toda la matriz de bloques para saber donde van a aparecer los enemigos
+			while(enemigosGenerados!=4) {
+						
+				for(int i=0;i<enemigos.length;i++) {
+					try {
+						if(enemigos[i]==null) {
+							int fila=rand.nextInt(10);
+							
+							espacioVacio=rand.nextInt(buscarCantidadEspaciosVacios(fila));
+							
+							for(int columnas=0;columnas<15;columnas++) {
+								//si el tipo de bloque es 0 quiere decir que es el bloque que es invisible osea el espacio vacio tonses ahi creamos al enemigo
+								if(mapa[fila][columnas].tipoBloque==0) {
+									if(espacioVacio-1<=0) {
+										enemigos[i]= new Enemigos(mapa[fila][columnas].x+10,mapa[fila][columnas].y+10,20,20,rand.nextInt(3),20,10,imagenEnemigo);
+										enemigosGenerados++;
+				 						break;		
+									}else {
+										espacioVacio--;
+									}
+									
+			 					
+			 							
+								}
+							}
+						}
+
+					}catch(Exception e) {
+								
+				   }
+				}
+						
+			}
+					
+				
+			
+		
+		enemigosGenerados=0;
+		
+	}
+	
+	public void cambiarDireccionEnemiga() {
+		enemigos[rand.nextInt(enemigos.length)].direccion=rand.nextInt(4);
+		
+	}
+	public void moverEnemigos() {
+		for(int i=0;i<enemigos.length;i++) {
+			//aqui preguntamos si el enemigo esta muerto o no
+			if(enemigos[i].vida!=0) {
+				
+				//evaluamos todo el mapa para ver si el enemigo se podra mover hacia la direcciona  al que va o no.. esto pa saber si hay un muro en su camino
+				for(int filas=0;filas<10;filas++) {
+					for(int columnas=0;columnas<15;columnas++) {
+						
+							switch(enemigos[i].direccion) {
+							//arriba
+							case 0:
+								if(enemigos[i].y-enemigos[i].velocidad>30) {
+									
+									if(enemigos[i].y-enemigos[i].velocidad<= mapa[filas][columnas].y+mapa[filas][columnas].alto && enemigos[i].y>mapa[filas][columnas].y && enemigos[i].x>=mapa[filas][columnas].x
+											&& enemigos[i].x<=mapa[filas][columnas].x+mapa[filas][columnas].largo ) {
+										
+
+										if(mapa[filas][columnas].tipoBloque==0) {
+											moverEnemigo=true;
+											
+										}else {
+											moverEnemigo=false;
+											filas=10;
+											columnas=15;
+										}
+										
+									}else {
+										moverEnemigo=true;
+										
+									}
+								}else {
+									moverEnemigo=false;
+
+								}
+								
+							break;
+							//abajo
+							case 1:
+								if(enemigos[i].y+enemigos[i].velocidad<limiteY-20) {
+									
+									if(enemigos[i].y+enemigos[i].velocidad+enemigos[i].alto<= mapa[filas][columnas].y+mapa[filas][columnas].alto && enemigos[i].y+enemigos[i].alto+enemigos[i].velocidad>=mapa[filas][columnas].y && enemigos[i].x>=mapa[filas][columnas].x
+											&& enemigos[i].x<=mapa[filas][columnas].x+mapa[filas][columnas].largo ) {
+										
+
+										if(mapa[filas][columnas].tipoBloque==0) {
+											moverEnemigo=true;
+											
+										}else {
+											moverEnemigo=false;
+											filas=10;
+											columnas=15;
+										}
+										
+									}else {
+										moverEnemigo=true;
+										
+									}
+								}else {
+									moverEnemigo=false;
+
+								}
+								
+							break;
+							//derecha
+							case 2:
+								if(enemigos[i].x+enemigos[i].velocidad<limiteX-40) {
+									
+									if(enemigos[i].x+enemigos[i].velocidad+enemigos[i].largo<= mapa[filas][columnas].x+mapa[filas][columnas].largo && enemigos[i].x+enemigos[i].largo+enemigos[i].velocidad>=mapa[filas][columnas].x && enemigos[i].y>=mapa[filas][columnas].y
+											&& enemigos[i].y<=mapa[filas][columnas].y+mapa[filas][columnas].alto ) {
+										
+
+										if(mapa[filas][columnas].tipoBloque==0) {
+											moverEnemigo=true;
+											
+										}else {
+											moverEnemigo=false;
+											filas=10;
+											columnas=15;
+										}
+										
+									}else {
+										moverEnemigo=true;
+										
+									}
+								}else {
+									moverEnemigo=false;
+
+								}
+								
+							break;
+							//izquierda
+							case 3:
+								if(enemigos[i].x-enemigos[i].velocidad>20) {
+									
+									if(enemigos[i].x-enemigos[i].velocidad<= mapa[filas][columnas].x+mapa[filas][columnas].largo && enemigos[i].x-enemigos[i].velocidad>=mapa[filas][columnas].x && enemigos[i].y>=mapa[filas][columnas].y
+											&& enemigos[i].y<=mapa[filas][columnas].y+mapa[filas][columnas].alto ) {
+										
+
+										if(mapa[filas][columnas].tipoBloque==0) {
+											moverEnemigo=true;
+											
+										}else {
+											moverEnemigo=false;
+											filas=10;
+											columnas=15;
+										}
+										
+									}else {
+										moverEnemigo=true;
+										
+									}
+								}else {
+									moverEnemigo=false;
+
+								}
+								
+							break;
+							
+						  }
+						
+						
+						
+						
+				 }
+					
+				
+				}
+				
+				if(moverEnemigo==true) {
+					switch(enemigos[i].direccion) {
+					case 0:
+						enemigos[i].y-=enemigos[i].velocidad;
+					break;
+					case 1:
+						enemigos[i].y+=enemigos[i].velocidad;
+
+					break;
+					case 2:
+						enemigos[i].x+=enemigos[i].velocidad;
+
+					break;
+					case 3:
+						enemigos[i].x-=enemigos[i].velocidad;
+
+					break;
+					
+				  }
+				}else {
+					enemigos[i].direccion=rand.nextInt(3);
+				}
+			}
+		}
+		
+		/*for(int i=0;i<enemigos.length;i++) {
+			System.out.println(i+" ::: "+enemigos[i].direccion);
+		}*/
+	}
+	
 	private void initialize() {
 		
 		generarMapa();
+		crearEnemigos();
 		//tiempos
 	  	timer.schedule(quitarBomba, 0, 1500);
+	  	timer.schedule(moverEnemigos, 0, 200);
+	  	//cada 300 milisegundos va a cambiar la dieccion enemiga de algun enemigo
+	  	timer.schedule(cambiarDireccionEnemiga, 0, 300);
+
+
 
 		frame = new JFrame();
 		frame.setBounds(100, 100, 773, 561);
@@ -414,7 +660,7 @@ public class CodigoMotor {
    			}
 
             
-   			//pintar zona de juego
+   			//pintar escenario de juego
    			
    			for(int i=0;i<10;i++) {
    				
@@ -422,7 +668,7 @@ public class CodigoMotor {
    					
    					if(mapa[i][i2].tipoBloque==0) {
    					 
-                     
+   	 
    						
    					}
 
@@ -443,6 +689,18 @@ public class CodigoMotor {
    				
    			}
    			
+   			//pintar enemigos
+   			for(int i=0;i<enemigos.length;i++) {
+   				
+   					
+   					try {
+	   	   		   		g.drawImage(enemigos[i].imagen, enemigos[i].x, enemigos[i].y, enemigos[i].largo, enemigos[i].alto, null);
+
+   					}catch(Exception e) {
+   						
+   					}
+   				
+   			}
    				
             
             //BORDES DEL MAPA
