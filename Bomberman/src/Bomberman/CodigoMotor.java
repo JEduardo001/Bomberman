@@ -3,9 +3,12 @@ package Bomberman;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -24,13 +27,14 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
 public class CodigoMotor {
 
 	private JFrame frame;
-
+	private int tiempo=0;
 	//juego
 	
 	JPanel tablero = new JPanel();
@@ -92,6 +96,12 @@ public class CodigoMotor {
         	 explotarBomba();
         	
          }
+	};
+	TimerTask sumartiempo = new TimerTask() {
+        public void run() {
+       	 sumartiempo();
+       	
+        }
 	};
 	 TimerTask moverEnemigos = new TimerTask() {
          public void run() {
@@ -229,6 +239,9 @@ public class CodigoMotor {
 			}
 		
 	}
+	public void sumartiempo() {
+		tiempo++;
+	}
 	
 	public void explotarBomba() {
 		
@@ -242,7 +255,11 @@ public class CodigoMotor {
 						//for para las filas
 						for(int i=0;i<10;i++) {
 							
-
+							///pendiente ha matar enemigos si explota bomba...
+							///
+							///
+							///
+							
 							//for para las columnas
 							for(int i2=0;i2<15;i2++) {
 								if(mapa[i][i2].tipoBloque!=0) {
@@ -253,14 +270,30 @@ public class CodigoMotor {
 										mapa[i][i2].x=0;
 										mapa[i][i2].y=0;
 										mapa[i][i2].tipoBloque=0;
-
-								
 									}else {
 										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
-
-									
 									}
 									
+									//quitar bloques de arriba y abajo por daño de la explocion 150 es el rango de explocion 
+									if(bombas[i3].y-80<=mapa[i][i2].y && bombas[i3].y+80>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
+										genBonus(i,i2);
+										mapa[i][i2].x=0;
+										mapa[i][i2].y=0;
+										mapa[i][i2].tipoBloque=0;
+									}else {
+										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
+									}
+									
+									
+									//quitar bloques de arriba y abajo por daño de la explocion 150 es el rango de explocion 
+									if(bombas[i3].y-80<=mapa[i][i2].y && bombas[i3].y+80>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
+										genBonus(i,i2);
+										mapa[i][i2].x=0;
+										mapa[i][i2].y=0;
+										mapa[i][i2].tipoBloque=0;
+									}else {
+										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
+									}
 									
 									//quitar bloques de derecha y izquierda por daño de la explocion 150 es el rango de explocion 
 									if(bombas[i3].y>=mapa[i][i2].y && bombas[i3].y<=mapa[i][i2].y+mapa[i][i2].alto && bombas[i3].x+80>=mapa[i][i2].x && bombas[i3].x-80<=mapa[i][i2].x ) {
@@ -269,12 +302,8 @@ public class CodigoMotor {
 										mapa[i][i2].x=0;
 										mapa[i][i2].y=0;
 										mapa[i][i2].tipoBloque=0;
-
-								
 									}else {
 										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
-
-									
 									}
 									
 									
@@ -746,7 +775,7 @@ public class CodigoMotor {
 								//si el tipo de bloque es 0 quiere decir que es el bloque que es invisible osea el espacio vacio tonses ahi creamos al enemigo
 								if(mapa[fila][columnas].tipoBloque==0) {
 									if(espacioVacio-1<=0) {
-										enemigos[i]= new Enemigos(mapa[fila][columnas].x,mapa[fila][columnas].y,40,40,rand.nextInt(3),50,10,imagenEnemigo);
+										enemigos[i]= new Enemigos(mapa[fila][columnas].x,mapa[fila][columnas].y,40,40,rand.nextInt(3),50,2,imagenEnemigo);
 										enemigosGenerados++;
 				 						break;		
 									}else {
@@ -941,13 +970,29 @@ public class CodigoMotor {
 		
 		generarMapa();
 		crearEnemigos();
+		
+		JLabel tiempoo = new JLabel("00:00");
+		
+		
+		
+        /*tiempo = new Timer(1000, new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seconds++;
+               minutos = seconds / 60;
+                segundos= seconds % 60;
+                tiempoo.setText(String.format("%02d:%02d", minutos, segundos));
+            }
+        });*/
+		
 		//tiempos 1500
 	  	timer.schedule(explotarBomba, 0, 1);
 	  	timer.schedule(moverEnemigos, 0, 200);
 	  	//cada 300 milisegundos va a cambiar la dieccion enemiga de algun enemigo
 	  	timer.schedule(cambiarDireccionEnemiga, 0, 300);
+	    timer.schedule(sumartiempo, 0, 1000);
 	  	//timer.schedule(moverJugador, 0, g);
-
 
 
 
@@ -1170,26 +1215,34 @@ public class CodigoMotor {
             
             //horizontal arriba
             g.setColor(Color.blue);
-            g.fillRect(0, 0, tablero.getWidth(),10);
+            g.fillRect(0, 0, tablero.getWidth(),15);
             //horizontal abajo
             g.setColor(Color.blue);
             g.fillRect(0, limiteY, tablero.getWidth(),10);
             
-          //verical izquierda
+            //verical izquierda
             g.setColor(Color.blue);
             g.fillRect(5, 0, 10,tablero.getHeight());
             //verical derecha
             g.setColor(Color.blue);
-            g.fillRect(limiteX-30, 0, 10,tablero.getHeight());
+            g.fillRect(limiteX-25, 0, 10,tablero.getHeight());
+            
+            //Menu
+            Font font = new Font("Comic Sans MS",Font.BOLD,14);
+            g.setFont(font);
+            g.setColor(Color.white);
+            
+            g.drawString("Tiempo:  "+tiempo, 20, 13);
+            g.drawString("Vidas: ", 670, 13);
+            g.drawString("100"+" pts", 350, 13);
+            
             
         
             tablero.repaint();
 
-          
-            
-
        }
-
+   
     }
+	
 
 }
