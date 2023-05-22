@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -29,28 +32,29 @@ public class CodigoMotor {
 	private JFrame frame;
 
 	//juego
+	
 	JPanel tablero = new JPanel();
 	int limiteX=780, limiteY=500;
 	static Random rand = new Random();
-
+	
 	boolean gameOver=false;
 	Timer timer = new Timer();
-	int xEspacio=50,x=21,yEspacio=50,y=21;
+	int xEspacio=50,x=20,yEspacio=50,y=20;
 	public Mapa [][] mapa= new Mapa[10][15];
 
 
 	//JUGADOR
 	static Image imagenJugador= Toolkit.getDefaultToolkit().getImage("personaje1.png");
-
+	public static int g=50;
 	/* LO QUE REPRESENTA CADA DATO:
 	 * int x,int y,int largo,int alto,int direccion,int velocidad,Image imagen
 	 * 
-	 *  	0 = ejeX, 1 = ejeY, 2= largo, 3 = alto, 4= direccion , 5= velocidad osea que tanto avanza, 6 = imagen del jugador
-
+	 *  	0 = ejeX, 1 = ejeY, 2= largo, 3 = alto, 4= direccion , 5= que tanto avanza velocidad, 6 = imagen del jugador, 7= cantidad de bombas que puede poner 
+			8 = si el jugador puede patear una bomba
 		DIRECCION:  0=arriba 1= abajo 2= derecha 3 = izquierda
 
-	 */                      //     0  1   2  3  4  5    6
-	Jugador jugador1 = new Jugador(120,370,30,30,0,10,imagenJugador);
+	 */                      //     0  1   2  3  4  5    6          7   8
+	Jugador jugador1 = new Jugador(120,370,40,40,0,50,imagenJugador,1,false);
 	
 	//BOMBA
 	static Image imagenBomba= Toolkit.getDefaultToolkit().getImage("Bomba.png");
@@ -60,6 +64,10 @@ public class CodigoMotor {
 	Enemigos enemigos[]= new Enemigos[4];
 	static Image imagenEnemigo= Toolkit.getDefaultToolkit().getImage("enemigo.png");
 	boolean moverEnemigo=true;
+	
+	//BONUS
+	Bonus bonus[]= new Bonus[15];
+
 	
 	
 	public static void main(String[] args) {
@@ -79,7 +87,7 @@ public class CodigoMotor {
 	 * Create the application.
 	 */
 	
-	 TimerTask quitarBomba = new TimerTask() {
+	 TimerTask explotarBomba = new TimerTask() {
          public void run() {
         	 explotarBomba();
         	
@@ -98,6 +106,55 @@ public class CodigoMotor {
        	
         }
 	};
+	Runnable activarBomba = new Runnable() {
+        public void run() {
+        	jugador1.cantBombas=1;
+       	
+        }
+	};
+	/*int cont=0;
+	TimerTask moverJugador = new TimerTask() {
+        public void run() {
+        	
+        	if(cont<=0) {
+    			//cont=50;
+
+    		}else {
+    			if(moverJugador()) {
+    				cont--;
+            		switch(jugador1.direccion) {
+            		case 0:
+            			
+            			jugador1.y-=jugador1.velocidad;
+            		break;
+            		case 1:
+            			jugador1.y+=jugador1.velocidad;
+                	break;
+            		case 2:
+            			jugador1.x+=jugador1.velocidad;
+                	break;
+            		case 3:
+            			jugador1.x-=jugador1.velocidad;
+                	break;
+            		
+            		}
+					comprobarSiTomoBonus();
+
+            		//System.out.println("quite  "+cont+ " x: "+jugador1.x+" y:: "+jugador1.y);
+            	}else {
+            		cont=0;
+            	}
+    			
+
+    		}
+    		
+        	
+        		
+        		
+        	
+       	
+        }
+	};*/
 
 	public CodigoMotor() {
 		initialize();
@@ -108,7 +165,7 @@ public class CodigoMotor {
 			
 				try {
 					if( bombas[i]== null || bombas[i].x==0) {
-						bombas[i] = new Bomba(jugador1.x+5,jugador1.y+5,20,20,imagenBomba);
+						bombas[i] = new Bomba(jugador1.x,jugador1.y,40,40,imagenBomba,1000);
 						break;
 					}
 				}catch(Exception e) {
@@ -119,6 +176,59 @@ public class CodigoMotor {
 	}
 	
 	
+	public void genBonus(int i,int i2) {
+		
+	
+			//esta varibale es para generar una probabilidad si es que va a haber un bonus o no
+			//int genBonus= rand.nextInt(6);
+			int genBonus=rand.nextInt(6);;
+
+			if(genBonus==5) {
+				for(int i4=0;i4<bonus.length;i4++) {
+					//preguntamos si hay un lugar disponible en el arreglo de bonus
+					if(bonus[i4]==null || bonus[i4].x==0) {
+						//esta variable es para generar aleatoriamente que tipo de bonus sera
+						int genTipoBonus = rand.nextInt(5);
+						
+
+						
+						/*
+						 * case 0= bonus de que puedes poner mas bombas
+						 * case 1= malo osea el que no te deja poner bombas
+						 * case 2= el de patear bomba
+						 * case 3= aumentar velocidad del jugador
+						 *  case 4= aumentar distancia  de explocion de las bombas
+						 * 
+						 */
+						switch(genTipoBonus) {
+						case 0:
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("PonerMasBombas.png"),0);
+						break;
+						case 1:
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("Malo.png"),1);
+
+						break;
+						case 2:
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("PatearBomba.png"),2);
+						break;
+						case 3:
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("Velocidad.png"),3);
+
+						break;
+						case 4:
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("llama.png"),3);
+
+						break;
+						
+						}
+						
+						break;
+					}
+				}
+			
+			}
+		
+	}
 	
 	public void explotarBomba() {
 		
@@ -126,59 +236,69 @@ public class CodigoMotor {
 		for(int i3=0;i3<bombas.length;i3++) {
 			try {
 				if(bombas[i3]!=null || bombas[i3].x!=0) {
-					//for para las filas
-					for(int i=0;i<10;i++) {
+					
+					if(bombas[i3].tiempo==0) {
 						
+						//for para las filas
+						for(int i=0;i<10;i++) {
+							
 
-						//for para las columnas
-						for(int i2=0;i2<15;i2++) {
-							if(mapa[i][i2].tipoBloque!=0) {
+							//for para las columnas
+							for(int i2=0;i2<15;i2++) {
+								if(mapa[i][i2].tipoBloque!=0) {
+									
+									//quitar bloques de arriba y abajo por daño de la explocion 150 es el rango de explocion 
+									if(bombas[i3].y-80<=mapa[i][i2].y && bombas[i3].y+80>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
+										genBonus(i,i2);
+										mapa[i][i2].x=0;
+										mapa[i][i2].y=0;
+										mapa[i][i2].tipoBloque=0;
+
 								
-								//quitar bloques de arriba y abajo por daño de la explocion 150 es el rango de explocion 
-								if(bombas[i3].y-150<=mapa[i][i2].y && bombas[i3].y+150>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
-									mapa[i][i2].x=0;
-									mapa[i][i2].x=0;
-									mapa[i][i2].tipoBloque=0;
+									}else {
+										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
 
 									
+									}
+									
+									
+									//quitar bloques de derecha y izquierda por daño de la explocion 150 es el rango de explocion 
+									if(bombas[i3].y>=mapa[i][i2].y && bombas[i3].y<=mapa[i][i2].y+mapa[i][i2].alto && bombas[i3].x+80>=mapa[i][i2].x && bombas[i3].x-80<=mapa[i][i2].x ) {
+										genBonus(i,i2);
 
-								}else {
-									//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
+										mapa[i][i2].x=0;
+										mapa[i][i2].y=0;
+										mapa[i][i2].tipoBloque=0;
 
 								
-								}
-								
-								
-								//quitar bloques de derecha y izquierda por daño de la explocion 150 es el rango de explocion 
-								if(bombas[i3].y>=mapa[i][i2].y && bombas[i3].y<=mapa[i][i2].y+mapa[i][i2].alto && bombas[i3].x+150>=mapa[i][i2].x && bombas[i3].x-150<=mapa[i][i2].x ) {
-									mapa[i][i2].x=0;
-									mapa[i][i2].x=0;
-									mapa[i][i2].tipoBloque=0;
+									}else {
+										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
 
 									
-
-								}else {
-									//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
-
-								
+									}
+									
+									
+									
+									
+									
+									
 								}
-								
-								
 								
 							}
-							
 						}
+						
+						bombas[i3].x=0;
+						bombas[i3].y=0;
+						
+					}else {
+						
+						bombas[i3].tiempo--;
 					}
+					
+				
 				}
 				
 
-				bombas[i3].x=0;
-				bombas[i3].y=0;
-				
-				
-				
-				
-				
 			}catch(Exception e) {
 				
 			}
@@ -189,9 +309,7 @@ public class CodigoMotor {
 		
 	}
 	public void generarMapa() {
-		
-		
-		
+	
 		for(int i=0;i<10;i++) {
 			for(int i2=0;i2<15;i2++) {
 				//este if es para que en ciertas cordenadas no me pinte un bloque encima del jugador o lo deje encerrado en bloques
@@ -210,17 +328,18 @@ public class CodigoMotor {
 				
 			}
 			y+=yEspacio;
-			x=21;
+			x=20;
 		}
 		
 	}
+	
 	
 	//esta funcion valida si a la direccion a la que me voy a mover hay un muro o no
 	public boolean moverJugador() {
 
 		boolean poderMoverJugador=true;
 		for(int i=0;i<10;i++) {
-			
+			int f=1;
 			for(int i2=0;i2<15;i2++) {
 				//DIRECCION:  0=arriba 1= abajo 2= derecha 3 = izquierda
 				if(mapa[i][i2].tipoBloque!=0) {
@@ -229,47 +348,76 @@ public class CodigoMotor {
 					switch(jugador1.direccion) {
 					//arriba
 					case 0:
-						if(jugador1.y-jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y-jugador1.velocidad>=mapa[i][i2].y && jugador1.x+30>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo ) {
+	
+						
+							if(jugador1.y-jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y-jugador1.velocidad>=mapa[i][i2].y && jugador1.x>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo 
+									|| jugador1.y-jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y-jugador1.velocidad>=mapa[i][i2].y && jugador1.x+jugador1.largo>=mapa[i][i2].x && jugador1.x+jugador1.largo<=mapa[i][i2].x+mapa[i][i2].largo) {
+								
+								poderMoverJugador=false;
+							}else {
+								
+								
+								poderMoverJugador=true;
+								
+						    }
 							
-							poderMoverJugador=false;
-						}else {
-							poderMoverJugador=true;
-							
-					    }
+						
+					
+					
 					break;
 					//abajo
 					case 1:
-						if(jugador1.y+jugador1.velocidad+jugador1.alto>=mapa[i][i2].y && jugador1.y+jugador1.velocidad+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+30>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo ) {
+						
+					
+				
 							
-							poderMoverJugador=false;
-						}else {
-							poderMoverJugador=true;
+							if(jugador1.y+jugador1.alto+jugador1.velocidad>=mapa[i][i2].y && jugador1.y+jugador1.alto+jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo 
+									 || jugador1.y+jugador1.alto+jugador1.velocidad>=mapa[i][i2].y && jugador1.y+jugador1.alto+jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo>=mapa[i][i2].x && jugador1.x+jugador1.largo<=mapa[i][i2].x+mapa[i][i2].largo   ) {
+										
+										poderMoverJugador=false;
+									}else {
+										poderMoverJugador=true;
+										
+								    }
+					
 							
-					    }
-					break;
+						break;
 					//derecha
 					case 2:
-						if(jugador1.y>=mapa[i][i2].y && jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
-						 	|| jugador1.y+jugador1.alto>=mapa[i][i2].y && jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo) {
-							
-							poderMoverJugador=false;
-							
-						}else {
-							poderMoverJugador=true;
-							
-					    }
+						
+					
+							if(jugador1.y>=mapa[i][i2].y && jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
+								 	|| jugador1.y+jugador1.alto>=mapa[i][i2].y && jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo) {
+									
+									poderMoverJugador=false;
+									
+								}else {
+									poderMoverJugador=true;
+									
+							    }
+					
+						
+						
+						
+
 					break;
 					//izquierda
 					case 3:
-						if(jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
-								|| jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y+jugador1.largo>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo) {
-							
-							//System.out.println("X: "+jugador1.x+" y:: "+jugador1.y+" X B:: "+mapa[i][i2].x+" Y B :: "+mapa[i][i2].y);
-							poderMoverJugador=false;
-						}else {
-							poderMoverJugador=true;
-							
-					    }
+						
+						
+							if(jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
+									|| jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y+jugador1.largo>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo) {
+								
+								//System.out.println("X: "+jugador1.x+" y:: "+jugador1.y+" X B:: "+mapa[i][i2].x+" Y B :: "+mapa[i][i2].y);
+								poderMoverJugador=false;
+							}else {
+								poderMoverJugador=true;
+								
+						    }
+						
+						
+						
+
 					break;
 					
 					}
@@ -284,13 +432,287 @@ public class CodigoMotor {
 			
 			if(poderMoverJugador==false) {
 				break;
-			}
-			
+			}		
 			
 		}
+		
+		
+		//validamos si esta encima de una bomba para poder patearla
+		
+		if(hayBomba()) {
+			poderMoverJugador=false;
+
+		}
+			if(patearBomba()==true) {
+				poderMoverJugador=false;
+			}
+		
+
+		
+		
 		return poderMoverJugador;
 	
 	}
+	public boolean hayBomba() {
+		boolean hayBomba=false;
+		for(int i=0;i<bombas.length;i++) {
+			try {
+				if(bombas[i].x!=0) {
+					switch(jugador1.direccion) {
+					//arriba
+					case 0:
+						if(jugador1.y-50==bombas[i].y && jugador1.x==bombas[i].x){
+							
+							hayBomba=true;
+						}else {
+							hayBomba=false;
+						}
+					break;
+					//abajo
+					case 1:
+						if(jugador1.y+50==bombas[i].y && jugador1.x==bombas[i].x) {
+							hayBomba=true;
+						}else {
+							hayBomba=false;
+							
+
+						}
+					break;
+					//derecha
+					case 2:
+						if(jugador1.x+50==bombas[i].x && jugador1.y==bombas[i].y) {
+							hayBomba=true;
+						}else {
+							hayBomba=false;
+						}
+					break;
+					//izquierda
+					case 3:
+						
+						if(jugador1.x-50==bombas[i].x && jugador1.y==bombas[i].y) {
+							hayBomba=true;
+						}else {
+							hayBomba=false;
+						}
+					break;
+					}
+					
+					if(hayBomba==true) {
+						break;
+					}
+				}
+
+			}catch(Exception e) {
+				
+			}
+			
+		}
+		return hayBomba;
+	}
+	public boolean patearBomba() {
+		boolean moverBomba=false,hayBomba=false;
+		if(jugador1.patearBomba==true) {
+			
+			
+			for(int i=0;i<bombas.length;i++) {
+				try {
+					if(bombas[i].x!=0) {
+						switch(jugador1.direccion) {
+						//arriba
+						case 0:
+							if(jugador1.y-50==bombas[i].y && jugador1.x==bombas[i].x){
+								
+								hayBomba=true;
+							}else {
+								hayBomba=false;
+							}
+						break;
+						//abajo
+						case 1:
+							if(jugador1.y+50==bombas[i].y && jugador1.x==bombas[i].x) {
+								hayBomba=true;
+							}else {
+								hayBomba=false;
+							
+
+							}
+						break;
+						//derecha
+						case 2:
+							if(jugador1.x+50==bombas[i].x && jugador1.y==bombas[i].y) {
+								hayBomba=true;
+							}else {
+								hayBomba=false;
+							}
+						break;
+						//izquierda
+						case 3:
+							
+							if(jugador1.x-50==bombas[i].x && jugador1.y==bombas[i].y) {
+								hayBomba=true;
+							}else {
+								hayBomba=false;
+							}
+						break;
+						}
+						
+						
+					}
+					
+					
+
+					if(hayBomba==true) {
+						
+					
+							
+							for(int fila=0;fila<10;fila++) {
+								for(int columna=0;columna<15;columna++) {
+									if(mapa[fila][columna].tipoBloque!=0) {
+										
+										switch(jugador1.direccion) {
+										case 0:
+											if(bombas[i].y-50==mapa[fila][columna].y && bombas[i].x==mapa[fila][columna].x) {
+												moverBomba=false;
+											}else {
+												moverBomba=true;
+											}
+										break;
+										
+										case 1:
+											if(bombas[i].y+50==mapa[fila][columna].y && bombas[i].x==mapa[fila][columna].x) {
+												moverBomba=false;
+											}else {
+												moverBomba=true;
+											}
+										break;
+										case 2:
+											if(bombas[i].x+50==mapa[fila][columna].x && bombas[i].y==mapa[fila][columna].y) {
+												moverBomba=false;
+											}else {
+												moverBomba=true;
+											}
+										break;
+										case 3:
+											
+											if(bombas[i].x-50==mapa[fila][columna].x && bombas[i].y==mapa[fila][columna].y) {
+												moverBomba=false;
+											}else {
+												moverBomba=true;
+											}
+										break;
+										}
+										
+									}else {
+										moverBomba=true;
+									}
+									
+									if(moverBomba==false) {
+										break;
+									}
+								
+								}
+								if(moverBomba==false) {
+									break;
+								}
+							}
+							
+							
+							
+							if(moverBomba==true) {
+								switch(jugador1.direccion) {
+								case 0:
+									bombas[i].y-=50;
+								break;
+								case 1:
+									bombas[i].y+=50;
+
+								break;
+								case 2:
+									bombas[i].x+=50;
+
+								break;
+								case 3:
+									bombas[i].x-=50;
+
+								break;
+								}
+							}
+						
+						
+					}
+					
+					
+					
+						
+					
+				}catch(Exception e) {
+					
+				}
+				
+			}
+			
+		
+		}
+		
+		return moverBomba;
+		
+	}
+	public void comprobarSiTomoBonus() {
+		for(int i=0;i<bonus.length;i++) {
+			try {
+				if(jugador1.x>=bonus[i].x && jugador1.x<=bonus[i].x+bonus[i].largo && jugador1.y<=bonus[i].y+bonus[i].alto && jugador1.y>=bonus[i].y
+					|| jugador1.x+jugador1.largo>=bonus[i].x && jugador1.x+jugador1.largo<=bonus[i].x+bonus[i].largo && jugador1.y<=bonus[i].y+bonus[i].alto && jugador1.y>=bonus[i].y
+					|| jugador1.x>=bonus[i].x && jugador1.x<=bonus[i].x+bonus[i].largo && jugador1.y+jugador1.alto<=bonus[i].y+bonus[i].alto && jugador1.y+jugador1.alto>=bonus[i].y
+					|| jugador1.x+jugador1.largo>=bonus[i].x && jugador1.x+jugador1.largo<=bonus[i].x+bonus[i].largo && jugador1.y+jugador1.alto<=bonus[i].y+bonus[i].alto && jugador1.y+jugador1.alto>=bonus[i].y) {
+					
+					//System.out.println("si :. xJ:: "+jugador1.x+"  :: yj:: "+jugador1.y +" :: xB : "+bonus[i].x+" : yB : "+bonus[i].y );
+					//ponemos las coordenadas del bonus en 0 para que no lo vuelva  pintar, osea pa que lo desaparezca
+					bonus[i].x=0;
+					bonus[i].y=0;
+					/*
+					 * case 0= bonus de que puedes poner mas bombas
+						 * case 1= malo osea el que no te deja poner bombas
+						 * case 2= el de patear bomba
+						 * case 3= aumentar velocidad del juagador
+						 * 
+					 */
+					switch(bonus[i].tipoBonus) {
+					case 0:
+						jugador1.cantBombas++;
+					break;
+					case 1:
+						jugador1.cantBombas=0;
+						 ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+						executor.schedule(activarBomba, 5, TimeUnit.SECONDS);
+						
+						 executor.shutdown();
+					break;
+					case 2:
+						jugador1.patearBomba=true;
+					break;
+					case 3:
+						if(jugador1.velocidad+10<=100) {
+								if(jugador1.velocidad+1<=3) {
+									//jugador1.velocidad++;
+
+								}
+
+						}
+					break;
+
+					}
+				}else {
+					//System.out.println("noo :. xJ:: "+jugador1.x+"  :: yj:: "+jugador1.y +" :: xB : "+bonus[i].x+" : yB : "+bonus[i].y );
+
+				}
+					
+			}catch(Exception e) {
+				
+			}
+		}
+	}
+	
+	
 	
 	//esta funcion se le llama en la funcion crear enemigos y solo es para saber la cantidad de espacios vacios que hay en una fila
 	public int buscarCantidadEspaciosVacios(int fila) {
@@ -324,7 +746,7 @@ public class CodigoMotor {
 								//si el tipo de bloque es 0 quiere decir que es el bloque que es invisible osea el espacio vacio tonses ahi creamos al enemigo
 								if(mapa[fila][columnas].tipoBloque==0) {
 									if(espacioVacio-1<=0) {
-										enemigos[i]= new Enemigos(mapa[fila][columnas].x+10,mapa[fila][columnas].y+10,20,20,rand.nextInt(3),20,10,imagenEnemigo);
+										enemigos[i]= new Enemigos(mapa[fila][columnas].x,mapa[fila][columnas].y,40,40,rand.nextInt(3),50,10,imagenEnemigo);
 										enemigosGenerados++;
 				 						break;		
 									}else {
@@ -356,6 +778,7 @@ public class CodigoMotor {
 		
 	}
 	public void moverEnemigos() {
+		
 		for(int i=0;i<enemigos.length;i++) {
 			//aqui preguntamos si el enemigo esta muerto o no
 			if(enemigos[i].vida!=0) {
@@ -518,11 +941,13 @@ public class CodigoMotor {
 		
 		generarMapa();
 		crearEnemigos();
-		//tiempos
-	  	timer.schedule(quitarBomba, 0, 1500);
+		//tiempos 1500
+	  	timer.schedule(explotarBomba, 0, 1);
 	  	timer.schedule(moverEnemigos, 0, 200);
 	  	//cada 300 milisegundos va a cambiar la dieccion enemiga de algun enemigo
 	  	timer.schedule(cambiarDireccionEnemiga, 0, 300);
+	  	//timer.schedule(moverJugador, 0, g);
+
 
 
 
@@ -554,38 +979,40 @@ public class CodigoMotor {
 				// TODO Auto-generated method stub
 				//System.out.println("dadas");
 				if(gameOver!=true) {
-					// TODO Auto-generated method stub
+					//cont=20;
 					//arriba
 					if(e.getKeyCode()==87) {
 						jugador1.direccion=0;
+						
 							if(jugador1.y-jugador1.velocidad>0 && moverJugador()) {
-							
-								jugador1.y-=jugador1.velocidad;
-
 								
+								
+								jugador1.y-=jugador1.velocidad;
+								comprobarSiTomoBonus();
 								
 							}	
 					}
 					//abajo
 					if(e.getKeyCode()==83) {
 						jugador1.direccion=1;
-
+					
 							if(jugador1.y+40+jugador1.velocidad<limiteY+20 && moverJugador()) {
 								
 									jugador1.y+=jugador1.velocidad;
-								
+									comprobarSiTomoBonus();
 	
 							}	
+							
 						
 					}
 					//izquierda
 					if(e.getKeyCode()==65) {
 						jugador1.direccion=3;
-
+						
 						if(jugador1.x-jugador1.velocidad>0 && moverJugador()) {
 							
 								jugador1.x-=jugador1.velocidad;
-
+								comprobarSiTomoBonus();
 							
 							
 						}
@@ -596,11 +1023,12 @@ public class CodigoMotor {
 					if(e.getKeyCode()==68) {
 						
 						jugador1.direccion=2;
-
+						
 						if(jugador1.x+40+jugador1.velocidad<limiteX-5 && moverJugador()) {
 							
 								jugador1.x+=jugador1.velocidad;
-							
+								comprobarSiTomoBonus();
+
 	
 						}
 						
@@ -608,8 +1036,26 @@ public class CodigoMotor {
 		
 					}
 					if(e.getKeyCode()==10) {
+						g-=10;
+						//System.out.println(g);
+						int bombasActivas=0;
+						//al poner una bomba primero comprobamos si puede poner una 
+						for(int i=0;i<bombas.length;i++) {
+							try {
+								if(bombas[i].x!=0) {
+									bombasActivas++;
+									
+								}
+							}catch(Exception e1) {
+								
+							}
+							
+						}
 						
-						crearBomba();
+						if(bombasActivas<jugador1.cantBombas) {
+							crearBomba();
+
+						}
 					}
 					
 					
@@ -691,8 +1137,6 @@ public class CodigoMotor {
    			
    			//pintar enemigos
    			for(int i=0;i<enemigos.length;i++) {
-   				
-   					
    					try {
 	   	   		   		g.drawImage(enemigos[i].imagen, enemigos[i].x, enemigos[i].y, enemigos[i].largo, enemigos[i].alto, null);
 
@@ -701,7 +1145,26 @@ public class CodigoMotor {
    					}
    				
    			}
+   			
+   			
+   			//PINTAR BONUS
+   			for(int i=0;i<bonus.length;i++) {
+   				try {
+   					if(bonus[i]!=null) {
+   						if(bonus[i].x!=0) {
+	   	   		   			g.drawImage(bonus[i].imagen, bonus[i].x, bonus[i].y, bonus[i].largo, bonus[i].alto, null);
+	   	   		   			
+
+   						}
+	   	   		   		
+
+   						
+   					}
    				
+   				}catch(Exception e) {
+   					
+   				}
+   			}
             
             //BORDES DEL MAPA
             
