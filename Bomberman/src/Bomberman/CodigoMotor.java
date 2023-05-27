@@ -35,6 +35,7 @@ public class CodigoMotor {
 
 	private JFrame frame;
 	private int tiempo=0;
+	private int puntaje=0;
 	//juego
 	
 	JPanel tablero = new JPanel();
@@ -255,35 +256,33 @@ public class CodigoMotor {
 						//for para las filas
 						for(int i=0;i<10;i++) {
 							
-							///pendiente ha matar enemigos si explota bomba...
-							///
-							///
-							///
+							
 							
 							//for para las columnas
 							for(int i2=0;i2<15;i2++) {
 								if(mapa[i][i2].tipoBloque!=0) {
 									
-									//quitar bloques de arriba y abajo por daño de la explocion 150 es el rango de explocion 
-									if(bombas[i3].y-80<=mapa[i][i2].y && bombas[i3].y+80>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
-										genBonus(i,i2);
-										mapa[i][i2].x=0;
-										mapa[i][i2].y=0;
-										mapa[i][i2].tipoBloque=0;
-									}else {
-										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
+									///se reinicia puntaje a 0 y se pregunta
+									puntaje=0;
+									for(int f5=0;f5<4;f5++) {
+										//quitar enemigos de arriba y abajo por daño de la explocion 150 es el rango de explocion 
+										if(bombas[i3].y-80<=enemigos[f5].y && bombas[i3].y+80>=enemigos[f5].y && bombas[i3].x>=enemigos[f5].x && bombas[i3].x<=enemigos[f5].x+enemigos[f5].largo) {
+											enemigos[f5].x=-20;
+											enemigos[f5].y=-20;
+											enemigos[f5].vida=0;	
+										}
+										
+										//quitar enemigos de derecha y izquierda por daño de la explocion 150 es el rango de explocion 
+										if(bombas[i3].y>=enemigos[f5].y && bombas[i3].y<=enemigos[f5].y+enemigos[f5].alto && bombas[i3].x+80>=enemigos[f5].x && bombas[i3].x-80<=enemigos[f5].x ) {
+											enemigos[f5].x=-20;
+											enemigos[f5].y=-20;
+											enemigos[f5].vida=0;
+										}
+										//se hace conteo de enemigos muertos
+										if(enemigos[f5].vida==0) {
+											puntaje+=100;
+										}
 									}
-									
-									//quitar bloques de arriba y abajo por daño de la explocion 150 es el rango de explocion 
-									if(bombas[i3].y-80<=mapa[i][i2].y && bombas[i3].y+80>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
-										genBonus(i,i2);
-										mapa[i][i2].x=0;
-										mapa[i][i2].y=0;
-										mapa[i][i2].tipoBloque=0;
-									}else {
-										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
-									}
-									
 									
 									//quitar bloques de arriba y abajo por daño de la explocion 150 es el rango de explocion 
 									if(bombas[i3].y-80<=mapa[i][i2].y && bombas[i3].y+80>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
@@ -305,12 +304,7 @@ public class CodigoMotor {
 									}else {
 										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
 									}
-									
-									
-									
-									
-									
-									
+					
 								}
 								
 							}
@@ -1234,7 +1228,7 @@ public class CodigoMotor {
             
             g.drawString("Tiempo:  "+tiempo, 20, 13);
             g.drawString("Vidas: ", 670, 13);
-            g.drawString("100"+" pts", 350, 13);
+            g.drawString(puntaje+" pts", 350, 13);
             
             
         
