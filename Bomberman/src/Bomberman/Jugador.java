@@ -3,11 +3,11 @@ package Bomberman;
 import java.awt.Image;
 
 public class Jugador {
-	int x,y,largo,alto,direccion,velocidad,cantBombas;
+	int x,y,largo,alto,direccion,velocidad,cantBombas,vidas;
 	Image imagen;
 	boolean patearBomba;
 	
-	public Jugador(int x,int y,int largo,int alto,int direccion,int velocidad,Image imagen,int cantBombas,boolean patearBomba) {
+	public Jugador(int x,int y,int largo,int alto,int direccion,int velocidad,Image imagen,int cantBombas,boolean patearBomba,int vidas) {
 		this.x=x;
 		this.y=y;
 		this.largo=largo;
@@ -17,5 +17,6 @@ public class Jugador {
 		this.imagen=imagen;
 		this.cantBombas=cantBombas;
 		this.patearBomba=patearBomba;
+		this.vidas=vidas;
 	}
 }

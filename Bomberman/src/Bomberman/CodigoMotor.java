@@ -59,7 +59,7 @@ public class CodigoMotor {
 		DIRECCION:  0=arriba 1= abajo 2= derecha 3 = izquierda
 
 	 */                      //     0  1   2  3  4  5    6          7   8
-	Jugador jugador1 = new Jugador(120,370,40,40,0,50,imagenJugador,1,false);
+	Jugador jugador1 = new Jugador(120,370,40,40,0,50,imagenJugador,1,false,5);
 	
 	//BOMBA
 	static Image imagenBomba= Toolkit.getDefaultToolkit().getImage("Bomba.png");
@@ -245,12 +245,37 @@ public class CodigoMotor {
 	}
 	
 	public void explotarBomba() {
+		////////////////////////////////////
+		//for para las bombas
+		/*for(int i3=0;i3<bombas.length;i3++) {
+			try {
+				if(bombas[i3]!=null || bombas[i3].x!=0) {
+					//para quitar vidas al jugador
+				
+					if(bombas[i3].y-80<=jugador1.y && bombas[i3].y+80>=jugador1.y && bombas[i3].x>=jugador1.x && bombas[i3].x<=jugador1.x+jugador1.largo
+							&& jugador1.vidas >=1) {
+						
+						jugador1.vidas--;
+						i3=bombas.length+3;
+					}else {
+						//jugador1.x=-20;
+						//jugador1.y=-20;
+						
+					}
+				}
+			
+		}catch(Exception e) {
+			
+		}
+		}
+		///////////////////////////////////////
+		*/
 		
 		//for para las bombas
 		for(int i3=0;i3<bombas.length;i3++) {
 			try {
 				if(bombas[i3]!=null || bombas[i3].x!=0) {
-					
+			
 					if(bombas[i3].tiempo==0) {
 						
 						//for para las filas
@@ -261,6 +286,7 @@ public class CodigoMotor {
 							//for para las columnas
 							for(int i2=0;i2<15;i2++) {
 								if(mapa[i][i2].tipoBloque!=0) {
+									
 									
 									///se reinicia puntaje a 0 y se pregunta
 									puntaje=0;
@@ -466,10 +492,12 @@ public class CodigoMotor {
 			poderMoverJugador=false;
 
 		}
-			if(patearBomba()==true) {
-				poderMoverJugador=false;
-			}
-		
+		if(patearBomba()==true) {
+			poderMoverJugador=false;
+		}
+		if(jugador1.vidas <1) {
+			poderMoverJugador=false;
+		}
 
 		
 		
@@ -1227,7 +1255,7 @@ public class CodigoMotor {
             g.setColor(Color.white);
             
             g.drawString("Tiempo:  "+tiempo, 20, 13);
-            g.drawString("Vidas: ", 670, 13);
+            g.drawString("Vidas: "+jugador1.vidas, 670, 13);
             g.drawString(puntaje+" pts", 350, 13);
             
             
