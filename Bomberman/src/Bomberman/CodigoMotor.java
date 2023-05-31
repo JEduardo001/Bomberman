@@ -3,8 +3,10 @@ package Bomberman;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -33,6 +35,10 @@ import java.awt.BorderLayout;
 
 public class CodigoMotor {
 
+	private JLabel puntajes = new JLabel();
+	private JLabel Vidas = new JLabel();
+	private JLabel tiempos = new JLabel();
+	private JPanel panel = new JPanel();
 	private JFrame frame;
 	private int tiempo=0;
 	private int puntaje=0;
@@ -242,6 +248,14 @@ public class CodigoMotor {
 	}
 	public void sumartiempo() {
 		tiempo++;
+		
+		tiempos.setText("Tiempo:  "+tiempo);
+		puntajes.setText(puntaje+" pts");
+		Vidas.setText("Vidas: "+jugador1.vidas);
+		
+		
+		panel.repaint();
+		panel.revalidate();
 	}
 	
 	public void explotarBomba() {
@@ -993,20 +1007,6 @@ public class CodigoMotor {
 		generarMapa();
 		crearEnemigos();
 		
-		JLabel tiempoo = new JLabel("00:00");
-		
-		
-		
-        /*tiempo = new Timer(1000, new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                seconds++;
-               minutos = seconds / 60;
-                segundos= seconds % 60;
-                tiempoo.setText(String.format("%02d:%02d", minutos, segundos));
-            }
-        });*/
 		
 		//tiempos 1500
 	  	timer.schedule(explotarBomba, 0, 1);
@@ -1019,19 +1019,27 @@ public class CodigoMotor {
 
 
 		frame = new JFrame();
-		frame.setBounds(100, 100, 773, 561);
+		frame.setBounds(100, 100, 783, 590);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
 		
-		JPanel panel = new JPanel();
 		panel.setBackground(new Color(255, 128, 0));
-		frame.getContentPane().add(panel, BorderLayout.NORTH);
+		panel.setLayout(new GridLayout(1,3));//aqui eliges que tipo de layout quieres para los puntajes
 		
+		
+		panel.add(tiempos);
+		
+		
+		panel.add(puntajes);
+		
+		
+		panel.add(Vidas);
+		
+		frame.getContentPane().add(panel, BorderLayout.NORTH);
 		tablero.setBackground(new Color(0, 0, 0));
 		frame.getContentPane().add(tablero, BorderLayout.CENTER);
 		
 		tablero.add(new MyGraphics());
-		
-		
 		
 		frame.addKeyListener(new KeyListener() {
 
@@ -1237,26 +1245,19 @@ public class CodigoMotor {
             
             //horizontal arriba
             g.setColor(Color.blue);
-            g.fillRect(0, 0, tablero.getWidth(),15);
+            g.fillRect(5, 0, 760,10);
             //horizontal abajo
             g.setColor(Color.blue);
-            g.fillRect(0, limiteY, tablero.getWidth(),10);
+            g.fillRect(5, 520, 760,10);
             
             //verical izquierda
             g.setColor(Color.blue);
-            g.fillRect(5, 0, 10,tablero.getHeight());
+            g.fillRect(5, 0, 10,530);
             //verical derecha
             g.setColor(Color.blue);
-            g.fillRect(limiteX-25, 0, 10,tablero.getHeight());
+            g.fillRect(limiteX-15, 0, 10,530);
             
-            //Menu
-            Font font = new Font("Comic Sans MS",Font.BOLD,14);
-            g.setFont(font);
-            g.setColor(Color.white);
             
-            g.drawString("Tiempo:  "+tiempo, 20, 13);
-            g.drawString("Vidas: "+jugador1.vidas, 670, 13);
-            g.drawString(puntaje+" pts", 350, 13);
             
             
         
