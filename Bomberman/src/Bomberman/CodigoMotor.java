@@ -42,10 +42,18 @@ public class CodigoMotor {
 	private JFrame frame;
 	private int tiempo=0;
 	private int puntaje=0;
+	Image cara = Toolkit.getDefaultToolkit().getImage("caraTab.png");
+	Image reloj = Toolkit.getDefaultToolkit().getImage("reloj.png");
+	Image muro = Toolkit.getDefaultToolkit().getImage("MuroMapa.png");
+	Image curva = Toolkit.getDefaultToolkit().getImage("curva.png");
+	Image curvaDer = Toolkit.getDefaultToolkit().getImage("curvaDer2.png");
+	Image cuadroAbajo = Toolkit.getDefaultToolkit().getImage("cuadroAbajo.png");
+	Image muroDer = Toolkit.getDefaultToolkit().getImage("muroDer.png");
+	Image muroArriba = Toolkit.getDefaultToolkit().getImage("muroArriba.png");
 	//juego
 	
 	JPanel tablero = new JPanel();
-	int limiteX=780, limiteY=500;
+	int limiteX=780, limiteY=700;
 	static Random rand = new Random();
 	
 	boolean gameOver=false;
@@ -1019,10 +1027,10 @@ public class CodigoMotor {
 
 
 		frame = new JFrame();
-		frame.setBounds(100, 100, 783, 590);
+		frame.setBounds(00, 0, limiteX, limiteY);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
-		
+		/*
 		panel.setBackground(new Color(255, 128, 0));
 		panel.setLayout(new GridLayout(1,3));//aqui eliges que tipo de layout quieres para los puntajes
 		
@@ -1032,12 +1040,13 @@ public class CodigoMotor {
 		
 		panel.add(puntajes);
 		
-		
+	//	panel.add(new MyGraphics());
+	
 		panel.add(Vidas);
-		
-		frame.getContentPane().add(panel, BorderLayout.NORTH);
-		tablero.setBackground(new Color(0, 0, 0));
-		frame.getContentPane().add(tablero, BorderLayout.CENTER);
+		*/
+	//	frame.getContentPane().add(panel, BorderLayout.NORTH);
+	//	tablero.setBackground(new Color(0, 0, 0));
+		frame.getContentPane().add(tablero, BorderLayout.NORTH);
 		
 		tablero.add(new MyGraphics());
 		
@@ -1161,9 +1170,17 @@ public class CodigoMotor {
             super.paintComponent(g);
             
             //pintar jugador
+            tableroPuntaje(g);
             
-   			g.drawImage(jugador1.imagen, jugador1.x, jugador1.y, jugador1.largo, jugador1.alto, null);
-            
+            map(g);
+            g.drawImage(jugador1.imagen, jugador1.x, jugador1.y, jugador1.largo, jugador1.alto, null);
+   			//g.setColor(Color.decode("#1DB37B"));
+   			//g.fill3DRect(0, 150, 700, 550, true);
+   			
+   			
+   			
+   			
+   			
    			//pintar bombas
    			for(int i=0;i<bombas.length;i++) {
    			
@@ -1180,7 +1197,7 @@ public class CodigoMotor {
    					
    			}
 
-            
+            /*
    			//pintar escenario de juego
    			
    			for(int i=0;i<10;i++) {
@@ -1209,7 +1226,7 @@ public class CodigoMotor {
    				}
    				
    			}
-   			
+   			*/
    			//pintar enemigos
    			for(int i=0;i<enemigos.length;i++) {
    					try {
@@ -1244,11 +1261,12 @@ public class CodigoMotor {
             //BORDES DEL MAPA
             
             //horizontal arriba
+   			/*
             g.setColor(Color.blue);
-            g.fillRect(5, 0, 760,10);
+      //      g.fillRect(5, 0, 760,10);
             //horizontal abajo
             g.setColor(Color.blue);
-            g.fillRect(5, 520, 760,10);
+            g.fillRect(5, 620, 760,10);
             
             //verical izquierda
             g.setColor(Color.blue);
@@ -1257,7 +1275,7 @@ public class CodigoMotor {
             g.setColor(Color.blue);
             g.fillRect(limiteX-15, 0, 10,530);
             
-            
+            */
             
             
         
@@ -1265,7 +1283,92 @@ public class CodigoMotor {
 
        }
    
+        private void tableroPuntaje(Graphics g) {
+        //	g.setColor(Color.decode("#B56F13"));
+        //	g.fill3DRect(0, 0, 700, 20, true);
+        	g.setColor(Color.decode("#FF9710"));
+        	g.fill3DRect(0, 0, 780, 90, true);
+        	g.setColor(Color.decode("#860502"));
+        	g.fill3DRect(90, 10, 50, 50, true);
+        	g.fill3DRect(300, 10, 300, 50, true);
+        	
+        	
+        	
+        	
+        	for(int e=0; e<27; e++) {
+        	g.fill3DRect(20+25*e-3, 70, 20, 10, true);
+        	}
+        	
+        	
+        	
+        	g.setColor(Color.black);
+        	g.fill3DRect(95, 15, 40, 40, true);
+        	g.fill3DRect(305, 15, 290, 40, true);
+        	
+        	for (int i=0; i<27; i++) {
+        		
+        		
+        		g.fill3DRect(20+25*i, 73, 15, 5, true);
+        	
+        	
+        	}
+        	
+        	
+        	//g.drawImage(imagen, x, y, limiteY, limiteX, null);
+        	g.drawImage(reloj,700, 10,40,60,null );
+        	g.drawImage(cara, 5, 10, 80, 80, null);
+        	
+        	
+        }
+        
     }
 	
+	
+	
+	private void map(Graphics g) {
+		g.setColor(Color.decode("#1DB37B"));
+		g.fill3DRect(0, 90, 780, 750, true);
+		
+	
+		for(int i=0; i<15; i++ ) {
+			
+			g.drawImage(muroArriba, 40+i*60, 90,60,20, null);
+		}
+	
+		
+		
+		int y=0;
+		for(int i=0; i<22; i++) {
+			if(i==0) {
+				y=90;
+				
+			}else {
+				y+=25;
+			}
+				
+		g.drawImage(muro, 5, y,60,40, null);
+		
+		}
 
+		g.drawImage(curva, 5, 605,80,50, null);
+		for(int e=0; e<20; e++) {
+		g.drawImage(cuadroAbajo, 55+e*40, 635,70,30, null);
+		}
+		
+		int y2=0;
+		for(int i=0; i<22; i++) {
+			if(i==0) {
+				y2=65;
+				
+			}else {
+				y2+=25;
+			}
+				
+	
+		
+			g.drawImage(muroDer, 700, y2,120,100, null);
+		}
+		g.drawImage(curvaDer, 690, 605,80,50, null);
+	//	g.drawImage(muroDer, 711, 90,100,80, null);
 }
+	}
