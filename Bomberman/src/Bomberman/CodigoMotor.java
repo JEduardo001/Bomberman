@@ -392,7 +392,7 @@ public class CodigoMotor {
 		for(int i=0;i<10;i++) {
 			for(int i2=0;i2<15;i2++) {
 				//este if es para que en ciertas cordenadas no me pinte un bloque encima del jugador o lo deje encerrado en bloques
-				if(i==7 && i2==3 || i==7 && i2==2 || i==6 && i2==2) {
+				if(i==5 && i2==1 || i==6 && i2==2 || i==6 && i2==1) {
 					//EL ULTIMO PARAMETRO INDICA EL TIPO DE BLOQUE QUE SERA
 					
 					mapa[i][i2]= new Mapa(x,y,40,40,0);
@@ -871,7 +871,7 @@ public class CodigoMotor {
 							switch(enemigos[i].direccion) {
 							//arriba
 							case 0:
-								if(enemigos[i].y-enemigos[i].velocidad>30) {
+								if(enemigos[i].y-enemigos[i].velocidad>100) {
 									
 									if(enemigos[i].y-enemigos[i].velocidad<= mapa[filas][columnas].y+mapa[filas][columnas].alto && enemigos[i].y>mapa[filas][columnas].y && enemigos[i].x>=mapa[filas][columnas].x
 											&& enemigos[i].x<=mapa[filas][columnas].x+mapa[filas][columnas].largo ) {
@@ -898,7 +898,7 @@ public class CodigoMotor {
 							break;
 							//abajo
 							case 1:
-								if(enemigos[i].y+enemigos[i].velocidad<limiteY-20) {
+								if(enemigos[i].y+enemigos[i].velocidad<limiteY-90) {
 									
 									if(enemigos[i].y+enemigos[i].velocidad+enemigos[i].alto<= mapa[filas][columnas].y+mapa[filas][columnas].alto && enemigos[i].y+enemigos[i].alto+enemigos[i].velocidad>=mapa[filas][columnas].y && enemigos[i].x>=mapa[filas][columnas].x
 											&& enemigos[i].x<=mapa[filas][columnas].x+mapa[filas][columnas].largo ) {
@@ -925,7 +925,7 @@ public class CodigoMotor {
 							break;
 							//derecha
 							case 2:
-								if(enemigos[i].x+enemigos[i].velocidad<limiteX-40) {
+								if(enemigos[i].x+enemigos[i].velocidad<limiteX-80) {
 									
 									if(enemigos[i].x+enemigos[i].velocidad+enemigos[i].largo<= mapa[filas][columnas].x+mapa[filas][columnas].largo && enemigos[i].x+enemigos[i].largo+enemigos[i].velocidad>=mapa[filas][columnas].x && enemigos[i].y>=mapa[filas][columnas].y
 											&& enemigos[i].y<=mapa[filas][columnas].y+mapa[filas][columnas].alto ) {
@@ -952,7 +952,7 @@ public class CodigoMotor {
 							break;
 							//izquierda
 							case 3:
-								if(enemigos[i].x-enemigos[i].velocidad>20) {
+								if(enemigos[i].x-enemigos[i].velocidad>50) {
 									
 									if(enemigos[i].x-enemigos[i].velocidad<= mapa[filas][columnas].x+mapa[filas][columnas].largo && enemigos[i].x-enemigos[i].velocidad>=mapa[filas][columnas].x && enemigos[i].y>=mapa[filas][columnas].y
 											&& enemigos[i].y<=mapa[filas][columnas].y+mapa[filas][columnas].alto ) {
@@ -1076,7 +1076,7 @@ public class CodigoMotor {
 					if(e.getKeyCode()==87) {
 						jugador1.direccion=0;
 						
-							if(jugador1.y-jugador1.velocidad>0 && moverJugador()) {
+							if(jugador1.y-jugador1.velocidad>100 && moverJugador()) {
 								
 								
 								jugador1.y-=jugador1.velocidad;
@@ -1088,7 +1088,7 @@ public class CodigoMotor {
 					if(e.getKeyCode()==83) {
 						jugador1.direccion=1;
 					
-							if(jugador1.y+40+jugador1.velocidad<limiteY+20 && moverJugador()) {
+							if(jugador1.y+40+jugador1.velocidad<limiteY-40 && moverJugador()) {
 								
 									jugador1.y+=jugador1.velocidad;
 									comprobarSiTomoBonus();
@@ -1101,7 +1101,7 @@ public class CodigoMotor {
 					if(e.getKeyCode()==65) {
 						jugador1.direccion=3;
 						
-						if(jugador1.x-jugador1.velocidad>0 && moverJugador()) {
+						if(jugador1.x-jugador1.velocidad>50 && moverJugador()) {
 							
 								jugador1.x-=jugador1.velocidad;
 								comprobarSiTomoBonus();
@@ -1116,7 +1116,7 @@ public class CodigoMotor {
 						
 						jugador1.direccion=2;
 						
-						if(jugador1.x+40+jugador1.velocidad<limiteX-5 && moverJugador()) {
+						if(jugador1.x+40+jugador1.velocidad<limiteX-40 && moverJugador()) {
 							
 								jugador1.x+=jugador1.velocidad;
 								comprobarSiTomoBonus();
