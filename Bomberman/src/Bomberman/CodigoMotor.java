@@ -81,7 +81,7 @@ public class CodigoMotor {
 		DIRECCION:  0=arriba 1= abajo 2= derecha 3 = izquierda
 
 	 */                      //     0  1   2  3  4  5    6          7   8
-	Jugador jugador1 = new Jugador(120,370,40,40,0,50,imagenJugador,1,false,5);
+	Jugador jugador1 = new Jugador(120,370,40,40,0,50,imagenJugador,1,true,5);
 	
 	//BOMBA
 	static Image imagenBomba= Toolkit.getDefaultToolkit().getImage("Bomba.png");
@@ -652,7 +652,7 @@ public class CodigoMotor {
 										
 										switch(jugador1.direccion) {
 										case 0:
-											if(bombas[i].y-50==mapa[fila][columna].y && bombas[i].x==mapa[fila][columna].x) {
+											if(bombas[i].y-50==mapa[fila][columna].y && bombas[i].x==mapa[fila][columna].x || bombas[i].y-50<100) {
 												moverBomba=false;
 											}else {
 												moverBomba=true;
@@ -660,14 +660,14 @@ public class CodigoMotor {
 										break;
 										
 										case 1:
-											if(bombas[i].y+50==mapa[fila][columna].y && bombas[i].x==mapa[fila][columna].x) {
+											if(bombas[i].y+50==mapa[fila][columna].y && bombas[i].x==mapa[fila][columna].x || bombas[i].y+50>limiteY-90) {
 												moverBomba=false;
 											}else {
 												moverBomba=true;
 											}
 										break;
 										case 2:
-											if(bombas[i].x+50==mapa[fila][columna].x && bombas[i].y==mapa[fila][columna].y) {
+											if(bombas[i].x+50==mapa[fila][columna].x && bombas[i].y==mapa[fila][columna].y || bombas[i].x+50>limiteX-80) {
 												moverBomba=false;
 											}else {
 												moverBomba=true;
@@ -675,7 +675,7 @@ public class CodigoMotor {
 										break;
 										case 3:
 											
-											if(bombas[i].x-50==mapa[fila][columna].x && bombas[i].y==mapa[fila][columna].y) {
+											if(bombas[i].x-50==mapa[fila][columna].x && bombas[i].y==mapa[fila][columna].y || bombas[i].x-50<50) {
 												moverBomba=false;
 											}else {
 												moverBomba=true;
@@ -1242,7 +1242,10 @@ public class CodigoMotor {
    			//pintar enemigos
    			for(int i=0;i<enemigos.length;i++) {
    					try {
-	   	   		   		g.drawImage(enemigos[i].imagen, enemigos[i].x, enemigos[i].y, enemigos[i].largo, enemigos[i].alto, null);
+   						if(enemigos[i].vida!=0) {
+   		   	   		   		g.drawImage(enemigos[i].imagen, enemigos[i].x, enemigos[i].y, enemigos[i].largo, enemigos[i].alto, null);
+
+   						}
 
    					}catch(Exception e) {
    						
