@@ -44,7 +44,7 @@ public class CodigoMotor {
 	private int tiempo=0;
 	private int puntaje=0;
 	private Font Vidas = new Font("impact", Font.PLAIN, 40);
-	private Font Score = new Font("impact", Font.PLAIN, 40);
+	private Font Score = new Font("impact", Font.PLAIN, 45);
 	private Font Puntaje = new Font("impact", Font.PLAIN, 38);
 	Image cara = Toolkit.getDefaultToolkit().getImage("caraTab.png");
 	Image reloj = Toolkit.getDefaultToolkit().getImage("reloj.png");
@@ -1331,13 +1331,13 @@ public class CodigoMotor {
         	
         	
         	//g.drawImage(imagen, x, y, limiteY, limiteX, null);
-        	g.drawImage(reloj,700, 10,40,60,null );
+        	g.drawImage(reloj,635, 05,40,60,null );
         	g.drawImage(cara, 5, 10, 80, 80, null);
         	
 			// Score
         	g.setFont(Score);
         	g.setColor(Color.orange);
-        	g.drawString("SC", 250, 50);
+        	g.drawString("SCORE", 170, 50);
         	
 			g.setFont(Puntaje);
 			g.setColor(Color.white);
