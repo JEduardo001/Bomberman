@@ -36,12 +36,16 @@ import java.awt.BorderLayout;
 public class CodigoMotor {
 
 	private JLabel puntajes = new JLabel();
-	private JLabel Vidas = new JLabel();
+	
 	private JLabel tiempos = new JLabel();
 	private JPanel panel = new JPanel();
 	private JFrame frame;
+	private int vidas=5;
 	private int tiempo=0;
 	private int puntaje=0;
+	private Font Vidas = new Font("impact", Font.PLAIN, 40);
+	private Font Score = new Font("impact", Font.PLAIN, 40);
+	private Font Puntaje = new Font("impact", Font.PLAIN, 38);
 	Image cara = Toolkit.getDefaultToolkit().getImage("caraTab.png");
 	Image reloj = Toolkit.getDefaultToolkit().getImage("reloj.png");
 	Image muro = Toolkit.getDefaultToolkit().getImage("MuroMapa.png");
@@ -50,6 +54,10 @@ public class CodigoMotor {
 	Image cuadroAbajo = Toolkit.getDefaultToolkit().getImage("cuadroAbajo.png");
 	Image muroDer = Toolkit.getDefaultToolkit().getImage("muroDer.png");
 	Image muroArriba = Toolkit.getDefaultToolkit().getImage("muroArriba.png");
+	Image muroIrrompible = Toolkit.getDefaultToolkit().getImage("muroIrrompible.png");
+	Image muroRompible = Toolkit.getDefaultToolkit().getImage("muroRompible.png");
+	
+
 	//juego
 	
 	JPanel tablero = new JPanel();
@@ -58,7 +66,7 @@ public class CodigoMotor {
 	
 	boolean gameOver=false;
 	Timer timer = new Timer();
-	int xEspacio=50,x=20,yEspacio=50,y=20;
+	int xEspacio=50,x=70,yEspacio=50,y=120;
 	public Mapa [][] mapa= new Mapa[10][15];
 
 
@@ -259,7 +267,7 @@ public class CodigoMotor {
 		
 		tiempos.setText("Tiempo:  "+tiempo);
 		puntajes.setText(puntaje+" pts");
-		Vidas.setText("Vidas: "+jugador1.vidas);
+		
 		
 		
 		panel.repaint();
@@ -399,7 +407,7 @@ public class CodigoMotor {
 				
 			}
 			y+=yEspacio;
-			x=20;
+			x=70;
 		}
 		
 	}
@@ -1197,28 +1205,32 @@ public class CodigoMotor {
    					
    			}
 
-            /*
+           
    			//pintar escenario de juego
    			
    			for(int i=0;i<10;i++) {
    				
-   				for(int i2=0;i2<15;i2++) {
+   				for(int i2=0;i2<13;i2++) {
    					
    					if(mapa[i][i2].tipoBloque==0) {
    					 
    	 
-   						
+   
    					}
 
    					if(mapa[i][i2].tipoBloque==1) {
-      					 g.setColor(Color.red);
-                        g.fillRect(mapa[i][i2].x, mapa[i][i2].y, mapa[i][i2].largo,mapa[i][i2].alto);
+   						
+   		   	   		   	g.drawImage(muroIrrompible,mapa[i][i2].x, mapa[i][i2].y, mapa[i][i2].largo,mapa[i][i2].alto,null );
+
+   	   					
+   	   				
+
                         
       						
       				}
    					if(mapa[i][i2].tipoBloque==2) {
-      					 g.setColor(Color.blue);
-                        g.fillRect(mapa[i][i2].x, mapa[i][i2].y, mapa[i][i2].largo,mapa[i][i2].alto);
+      					
+      					g.drawImage(muroRompible,mapa[i][i2].x, mapa[i][i2].y, mapa[i][i2].largo,mapa[i][i2].alto,null );
                         
       						
       				}
@@ -1226,7 +1238,7 @@ public class CodigoMotor {
    				}
    				
    			}
-   			*/
+   			
    			//pintar enemigos
    			for(int i=0;i<enemigos.length;i++) {
    					try {
@@ -1292,6 +1304,7 @@ public class CodigoMotor {
         	g.fill3DRect(90, 10, 50, 50, true);
         	g.fill3DRect(300, 10, 300, 50, true);
         	
+
         	
         	
         	
@@ -1318,7 +1331,22 @@ public class CodigoMotor {
         	g.drawImage(reloj,700, 10,40,60,null );
         	g.drawImage(cara, 5, 10, 80, 80, null);
         	
+			// Score
+        	g.setFont(Score);
+        	g.setColor(Color.orange);
+        	g.drawString("SC", 250, 50);
         	
+			g.setFont(Puntaje);
+			g.setColor(Color.white);
+			g.drawString(""+puntaje, 315, 50);
+			
+        
+			// Vidas
+			g.setFont(Vidas);
+			g.setColor(Color.white);
+			g.drawString(""+vidas, 105, 50);
+			
+			
         }
         
     }
