@@ -44,7 +44,7 @@ public class CodigoMotor {
 	private int tiempo=0;
 	private int puntaje=0;
 	private Font Vidas = new Font("impact", Font.PLAIN, 40);
-	private Font Score = new Font("impact", Font.PLAIN, 45);
+	private Font Score = new Font("impact", Font.PLAIN, 40);
 	private Font Puntaje = new Font("impact", Font.PLAIN, 38);
 	Image cara = Toolkit.getDefaultToolkit().getImage("caraTab.png");
 	Image reloj = Toolkit.getDefaultToolkit().getImage("reloj.png");
@@ -59,15 +59,17 @@ public class CodigoMotor {
 	
 
 	//juego
-	
+	 Random random = new Random();
 	JPanel tablero = new JPanel();
 	int limiteX=780, limiteY=700;
 	static Random rand = new Random();
-	
 	boolean gameOver=false;
 	Timer timer = new Timer();
 	int xEspacio=50,x=70,yEspacio=50,y=120;
 	public Mapa [][] mapa= new Mapa[10][15];
+
+	//portal de salida
+	int xPortalSiguienteNivel,yPortalSiguienteNivel,filaPortalSiguienteNivel,columnaPortalSiguienteNivel;
 
 
 	//JUGADOR
@@ -81,7 +83,7 @@ public class CodigoMotor {
 		DIRECCION:  0=arriba 1= abajo 2= derecha 3 = izquierda
 
 	 */                      //     0  1   2  3  4  5    6          7   8
-	Jugador jugador1 = new Jugador(120,370,40,40,0,50,imagenJugador,1,true,5);
+	Jugador jugador1 = new Jugador(70,120,40,40,0,50,imagenJugador,1,true,5);
 	
 	//BOMBA
 	static Image imagenBomba= Toolkit.getDefaultToolkit().getImage("Bomba.png");
@@ -262,6 +264,17 @@ public class CodigoMotor {
 			}
 		
 	}
+	
+	public void borrarBonus() {
+		for(int i=0;i<bonus.length;i++) {
+			try {
+				bonus[i].x=0;
+				bonus[i].y=0;
+			}catch(Exception e) {
+				
+			}
+		}
+	}
 	public void sumartiempo() {
 		tiempo++;
 		
@@ -314,8 +327,9 @@ public class CodigoMotor {
 							
 							
 							//for para las columnas
-							for(int i2=0;i2<15;i2++) {
-								if(mapa[i][i2].tipoBloque!=0) {
+							for(int i2=0;i2<13;i2++) {
+								
+								if(mapa[i][i2].tipoBloque!=0 && mapa[i][i2].tipoBloque!=1 ) {
 									
 									
 									///se reinicia puntaje a 0 y se pregunta
@@ -342,21 +356,32 @@ public class CodigoMotor {
 									
 									//quitar bloques de arriba y abajo por daño de la explocion 150 es el rango de explocion 
 									if(bombas[i3].y-80<=mapa[i][i2].y && bombas[i3].y+80>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
-										genBonus(i,i2);
+										if(mapa[i][i2].tipoBloque!=3) {
+											genBonus(i,i2);
+										}
+										if(mapa[i][i2].tipoBloque==3) {
+											mapa[i][i2].x=0;
+											mapa[i][i2].y=0;
+										}
 										mapa[i][i2].x=0;
 										mapa[i][i2].y=0;
-										mapa[i][i2].tipoBloque=0;
+										//mapa[i][i2].tipoBloque=0;
 									}else {
 										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
 									}
 									
 									//quitar bloques de derecha y izquierda por daño de la explocion 150 es el rango de explocion 
 									if(bombas[i3].y>=mapa[i][i2].y && bombas[i3].y<=mapa[i][i2].y+mapa[i][i2].alto && bombas[i3].x+80>=mapa[i][i2].x && bombas[i3].x-80<=mapa[i][i2].x ) {
-										genBonus(i,i2);
-
+										if(mapa[i][i2].tipoBloque!=3) {
+											genBonus(i,i2);
+										}
+										if(mapa[i][i2].tipoBloque==3) {
+											mapa[i][i2].x=0;
+											mapa[i][i2].y=0;
+										}
 										mapa[i][i2].x=0;
 										mapa[i][i2].y=0;
-										mapa[i][i2].tipoBloque=0;
+										//mapa[i][i2].tipoBloque=0;
 									}else {
 										//System.out.println("xb:: "+bombas[i3].x+" yb:::  "+bombas[i3].y+"  xM:: "+mapa[i][i2].x+" yM :: "+mapa[i][i2].y);
 									}
@@ -388,18 +413,67 @@ public class CodigoMotor {
 		
 	}
 	public void generarMapa() {
-	
+		int cantBloquesIrrompibles=0;
+		boolean ponerMuroIrrompible=false;
+		int cantEspaciosVacios=0;
+		x=70;
+		y=120;
+		//generamos la posicion en donde va a estar el portal para pasar al siguiente nivel
+		filaPortalSiguienteNivel=rand.nextInt(10);
+		columnaPortalSiguienteNivel=rand.nextInt(13);
+		
+		
 		for(int i=0;i<10;i++) {
-			for(int i2=0;i2<15;i2++) {
+			// selaguea por que al generar enermigos no hay suficiente cantidad de espacios vacios pa generarlos
+			for(int i2=0;i2<13;i2++) {
 				//este if es para que en ciertas cordenadas no me pinte un bloque encima del jugador o lo deje encerrado en bloques
-				if(i==5 && i2==1 || i==6 && i2==2 || i==6 && i2==1) {
+				if(i==0 && i2==0 || i==0 && i2==1 || i==1 && i2==0) {
 					//EL ULTIMO PARAMETRO INDICA EL TIPO DE BLOQUE QUE SERA
-					
 					mapa[i][i2]= new Mapa(x,y,40,40,0);
 
 				}else {
-					mapa[i][i2]= new Mapa(x,y,40,40,rand.nextInt(3));
-
+					if(i==filaPortalSiguienteNivel && i2==columnaPortalSiguienteNivel) {
+						xPortalSiguienteNivel=x;
+						yPortalSiguienteNivel=y;
+						mapa[i][i2]= new Mapa(x,y,40,40,3);
+						System.out.println(i+"  : "+i2);
+					}else {
+						
+						//preuntamos si la fila en la que esta es divisible entre 2 para saber si la fila en la que esta
+						//va a generar los muros irrompibles que no son aleatorios
+						if(i%2!=0) {
+							if(ponerMuroIrrompible==false) {
+								mapa[i][i2]= new Mapa(x,y,40,40,random.nextInt(3));
+								
+								if(mapa[i][i2].tipoBloque==1) {
+									//preguntamos si aun no excedemos la cantidad de bloques irrompibles que se pueden generar por fila
+									if(cantBloquesIrrompibles+1>=3) {
+										mapa[i][i2].tipoBloque=random.nextBoolean() ? 0 : 2;
+										if(mapa[i][i2].tipoBloque==0) {
+											cantEspaciosVacios++;
+										}
+									}
+									
+								}
+								
+								ponerMuroIrrompible=true;
+							}else {
+								mapa[i][i2]= new Mapa(x,y,40,40,1);
+								ponerMuroIrrompible=false;;
+							}
+							
+						}else {
+							
+							
+							mapa[i][i2]= new Mapa(x,y,40,40,random.nextBoolean() ? 0 : 2);
+							if(mapa[i][i2].tipoBloque==0) {
+								cantEspaciosVacios++;
+							}
+							
+						}
+						
+	
+					}
 					
 				}
 				x+=xEspacio;
@@ -408,8 +482,26 @@ public class CodigoMotor {
 			}
 			y+=yEspacio;
 			x=70;
+			cantBloquesIrrompibles=0;
+			ponerMuroIrrompible=false;
 		}
-		
+	
+		//preguntamos si la cantidad deespacios vacios generados es menor a 0, para evitar error al momento de generar lo enemigos
+		//por si no hay suficientes bloques vacios para generar los enemigos
+		if(cantEspaciosVacios<=10) {
+			int fila,columna;
+			while(cantEspaciosVacios<=10) {
+				fila=rand.nextInt(10);
+				columna=rand.nextInt(13);
+				
+				
+				if(mapa[fila][columna].tipoBloque==2) {
+					mapa[fila][columna].tipoBloque=0;
+					cantEspaciosVacios++;
+
+				}
+			}
+		}
 	}
 	
 	
@@ -419,7 +511,8 @@ public class CodigoMotor {
 		boolean poderMoverJugador=true;
 		for(int i=0;i<10;i++) {
 			int f=1;
-			for(int i2=0;i2<15;i2++) {
+			for(int i2=0;i2<13;i2++) {
+			
 				//DIRECCION:  0=arriba 1= abajo 2= derecha 3 = izquierda
 				if(mapa[i][i2].tipoBloque!=0) {
 					
@@ -427,8 +520,27 @@ public class CodigoMotor {
 					switch(jugador1.direccion) {
 					//arriba
 					case 0:
-	
 						
+						if(jugador1.y-jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel) {
+							if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
+								jugador1.x=70;
+								jugador1.y=120;
+								generarMapa();
+								crearEnemigos();
+								borrarBonus();
+								poderMoverJugador=false;
+
+							}else {
+								if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
+									poderMoverJugador=false;
+
+								}
+
+								
+							}
+							
+							
+						}else {
 							if(jugador1.y-jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y-jugador1.velocidad>=mapa[i][i2].y && jugador1.x>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo 
 									|| jugador1.y-jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y-jugador1.velocidad>=mapa[i][i2].y && jugador1.x+jugador1.largo>=mapa[i][i2].x && jugador1.x+jugador1.largo<=mapa[i][i2].x+mapa[i][i2].largo) {
 								
@@ -439,6 +551,8 @@ public class CodigoMotor {
 								poderMoverJugador=true;
 								
 						    }
+						}
+							
 							
 						
 					
@@ -448,8 +562,24 @@ public class CodigoMotor {
 					case 1:
 						
 					
-				
-							
+						if(jugador1.y+jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel) {
+							if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
+								jugador1.x=70;
+								jugador1.y=120;
+								generarMapa();
+								crearEnemigos();
+								borrarBonus();
+								poderMoverJugador=false;
+
+							}else {
+								if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
+									poderMoverJugador=false;
+
+								}
+
+							}
+
+						}else {
 							if(jugador1.y+jugador1.alto+jugador1.velocidad>=mapa[i][i2].y && jugador1.y+jugador1.alto+jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo 
 									 || jugador1.y+jugador1.alto+jugador1.velocidad>=mapa[i][i2].y && jugador1.y+jugador1.alto+jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo>=mapa[i][i2].x && jugador1.x+jugador1.largo<=mapa[i][i2].x+mapa[i][i2].largo   ) {
 										
@@ -458,13 +588,32 @@ public class CodigoMotor {
 										poderMoverJugador=true;
 										
 								    }
+						}
+							
+							
 					
 							
 						break;
 					//derecha
 					case 2:
 						
-					
+						if(jugador1.y==yPortalSiguienteNivel && jugador1.x+jugador1.velocidad==xPortalSiguienteNivel) {
+							if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
+								jugador1.x=70;
+								jugador1.y=120;
+								generarMapa();
+								crearEnemigos();
+								borrarBonus();
+								poderMoverJugador=false;
+
+							}else {
+								if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
+									poderMoverJugador=false;
+
+								}
+
+							}
+						}else {
 							if(jugador1.y>=mapa[i][i2].y && jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
 								 	|| jugador1.y+jugador1.alto>=mapa[i][i2].y && jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo) {
 									
@@ -474,6 +623,9 @@ public class CodigoMotor {
 									poderMoverJugador=true;
 									
 							    }
+						}
+					
+							
 					
 						
 						
@@ -483,7 +635,24 @@ public class CodigoMotor {
 					//izquierda
 					case 3:
 						
-						
+						if(jugador1.y==yPortalSiguienteNivel && jugador1.x-jugador1.velocidad==xPortalSiguienteNivel) {
+							if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
+								jugador1.x=70;
+								jugador1.y=120;
+								generarMapa();
+								crearEnemigos();
+								borrarBonus();
+								poderMoverJugador=false;
+
+							}else {
+								if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
+									poderMoverJugador=false;
+
+								}
+
+							}
+
+						}else {
 							if(jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
 									|| jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y+jugador1.largo>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo) {
 								
@@ -493,6 +662,8 @@ public class CodigoMotor {
 								poderMoverJugador=true;
 								
 						    }
+						}
+							
 						
 						
 						
@@ -502,16 +673,23 @@ public class CodigoMotor {
 					}
 				}
 				
+			
 				
+				
+				
+					if(poderMoverJugador==false) {
+						break;
+					}
+
+				
+					
+			}
+		
 				if(poderMoverJugador==false) {
 					break;
 				}
-	
-			}
-			
-			if(poderMoverJugador==false) {
-				break;
-			}		
+
+				
 			
 		}
 		
@@ -647,7 +825,7 @@ public class CodigoMotor {
 					
 							
 							for(int fila=0;fila<10;fila++) {
-								for(int columna=0;columna<15;columna++) {
+								for(int columna=0;columna<13;columna++) {
 									if(mapa[fila][columna].tipoBloque!=0) {
 										
 										switch(jugador1.direccion) {
@@ -722,10 +900,7 @@ public class CodigoMotor {
 						
 					}
 					
-					
-					
-						
-					
+	
 				}catch(Exception e) {
 					
 				}
@@ -798,7 +973,7 @@ public class CodigoMotor {
 	//esta funcion se le llama en la funcion crear enemigos y solo es para saber la cantidad de espacios vacios que hay en una fila
 	public int buscarCantidadEspaciosVacios(int fila) {
 		int cantEspaciosVacios=0;
-		for(int columna=0;columna<15;columna++) {
+		for(int columna=0;columna<13;columna++) {
 			if(mapa[fila][columna].tipoBloque==0) {
 				cantEspaciosVacios++;
 			}
@@ -814,18 +989,18 @@ public class CodigoMotor {
 		
 
 			//evaluamos toda la matriz de bloques para saber donde van a aparecer los enemigos
-			while(enemigosGenerados!=4) {
+			while(enemigosGenerados<=4) {
 						
 				for(int i=0;i<enemigos.length;i++) {
 					try {
-						if(enemigos[i]==null) {
+						
 							int fila=rand.nextInt(10);
 							
 							espacioVacio=rand.nextInt(buscarCantidadEspaciosVacios(fila));
 							
-							for(int columnas=0;columnas<15;columnas++) {
+							for(int columnas=0;columnas<13;columnas++) {
 								//si el tipo de bloque es 0 quiere decir que es el bloque que es invisible osea el espacio vacio tonses ahi creamos al enemigo
-								if(mapa[fila][columnas].tipoBloque==0) {
+								if(mapa[fila][columnas].tipoBloque==0 ) {
 									if(espacioVacio-1<=0) {
 										enemigos[i]= new Enemigos(mapa[fila][columnas].x,mapa[fila][columnas].y,40,40,rand.nextInt(3),50,2,imagenEnemigo);
 										enemigosGenerados++;
@@ -838,12 +1013,13 @@ public class CodigoMotor {
 			 							
 								}
 							}
-						}
+						
 
 					}catch(Exception e) {
-								
+
 				   }
 				}
+
 						
 			}
 					
@@ -851,7 +1027,7 @@ public class CodigoMotor {
 			
 		
 		enemigosGenerados=0;
-		
+
 	}
 	
 	public void cambiarDireccionEnemiga() {
@@ -866,7 +1042,7 @@ public class CodigoMotor {
 				
 				//evaluamos todo el mapa para ver si el enemigo se podra mover hacia la direcciona  al que va o no.. esto pa saber si hay un muro en su camino
 				for(int filas=0;filas<10;filas++) {
-					for(int columnas=0;columnas<15;columnas++) {
+					for(int columnas=0;columnas<13;columnas++) {
 						
 							switch(enemigos[i].direccion) {
 							//arriba
@@ -1030,7 +1206,7 @@ public class CodigoMotor {
 	  	//cada 300 milisegundos va a cambiar la dieccion enemiga de algun enemigo
 	  	timer.schedule(cambiarDireccionEnemiga, 0, 300);
 	    timer.schedule(sumartiempo, 0, 1000);
-	  	//timer.schedule(moverJugador, 0, g);
+	  	//timer.schedule(moverJugador, 0, 1);
 
 
 
@@ -1060,23 +1236,29 @@ public class CodigoMotor {
 		
 		frame.addKeyListener(new KeyListener() {
 
+			
+			
 			@Override
 			public void keyTyped(KeyEvent e) {
 				// TODO Auto-generated method stub
+				
+				
 				
 			}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// TODO Auto-generated method stub
-				//System.out.println("dadas");
+				
+				
+				
 				if(gameOver!=true) {
-					//cont=20;
+					//cont=50;
 					//arriba
 					if(e.getKeyCode()==87) {
 						jugador1.direccion=0;
 						
-							if(jugador1.y-jugador1.velocidad>100 && moverJugador()) {
+							if(jugador1.y-jugador1.velocidad>100 && moverJugador() ) {
 								
 								
 								jugador1.y-=jugador1.velocidad;
@@ -1148,6 +1330,9 @@ public class CodigoMotor {
 							crearBomba();
 
 						}
+						
+						
+						
 					}
 					
 					
@@ -1158,6 +1343,8 @@ public class CodigoMotor {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// TODO Auto-generated method stub
+				
+				
 				
 			}});
 		
@@ -1212,28 +1399,52 @@ public class CodigoMotor {
    				
    				for(int i2=0;i2<13;i2++) {
    					
-   					if(mapa[i][i2].tipoBloque==0) {
-   					 
-   	 
-   
-   					}
-
-   					if(mapa[i][i2].tipoBloque==1) {
+   					if(mapa[i][i2].x!=0) {
    						
-   		   	   		   	g.drawImage(muroIrrompible,mapa[i][i2].x, mapa[i][i2].y, mapa[i][i2].largo,mapa[i][i2].alto,null );
+   						if(mapa[i][i2].tipoBloque==0) {
+   	   					 
+   					   	 
+   						   
+   	   					}
 
+   	   					if(mapa[i][i2].tipoBloque==1) {
+   	   						
+   	   		   	   		   	g.drawImage(muroIrrompible,mapa[i][i2].x, mapa[i][i2].y, mapa[i][i2].largo,mapa[i][i2].alto,null );
+
+   	   	   					
+   	   	   				
+
+   	                        
+   	      						
+   	      				}
+   	   					if(mapa[i][i2].tipoBloque==2) {
+   	      					
+   	      					g.drawImage(muroRompible,mapa[i][i2].x, mapa[i][i2].y, mapa[i][i2].largo,mapa[i][i2].alto,null );
+   	                        
+   	      						
+   	      				}
+   	   					//portal de salida
+   	   					if(mapa[i][i2].tipoBloque==3) {
+   	      					
+   	   						
+   	   	      					g.drawImage(muroRompible,mapa[i][i2].x, mapa[i][i2].y, mapa[i][i2].largo,mapa[i][i2].alto,null );
+	
+   	      				}
    	   					
-   	   				
-
-                        
-      						
-      				}
-   					if(mapa[i][i2].tipoBloque==2) {
+   					}else {
+   					//portal de salida
+   	   					if(mapa[i][i2].tipoBloque==3) {
+   	      					
+   	   						
+   	   	   						g.setColor(Color.yellow);
+   	   	   			   			g.fill3DRect(xPortalSiguienteNivel, yPortalSiguienteNivel, 40,40, true);
+		
+   	      				}
+   					}
+   					
+   					
       					
-      					g.drawImage(muroRompible,mapa[i][i2].x, mapa[i][i2].y, mapa[i][i2].largo,mapa[i][i2].alto,null );
-                        
-      						
-      				}
+      				
    	
    				}
    				
@@ -1331,13 +1542,13 @@ public class CodigoMotor {
         	
         	
         	//g.drawImage(imagen, x, y, limiteY, limiteX, null);
-        	g.drawImage(reloj,635, 05,40,60,null );
+        	g.drawImage(reloj,700, 10,40,60,null );
         	g.drawImage(cara, 5, 10, 80, 80, null);
         	
 			// Score
         	g.setFont(Score);
         	g.setColor(Color.orange);
-        	g.drawString("SCORE", 170, 50);
+        	g.drawString("SC", 250, 50);
         	
 			g.setFont(Puntaje);
 			g.setColor(Color.white);
