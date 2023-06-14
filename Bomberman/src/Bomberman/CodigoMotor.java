@@ -141,13 +141,6 @@ public class CodigoMotor {
        	
         }
 	};
-	TimerTask moverBomba = new TimerTask() {
-        public void run() {
-        	moverBombas();
-       	
-        }
-	};
-	
 	Runnable activarBomba = new Runnable() {
         public void run() {
         	jugador1.cantBombas=1;
@@ -207,7 +200,7 @@ public class CodigoMotor {
 			
 				try {
 					if( bombas[i]== null || bombas[i].x==0) {
-						bombas[i] = new Bomba(jugador1.x,jugador1.y,40,40,imagenBomba,1000,0,false);
+						bombas[i] = new Bomba(jugador1.x,jugador1.y,40,40,imagenBomba,1000);
 						break;
 					}
 				}catch(Exception e) {
@@ -400,7 +393,6 @@ public class CodigoMotor {
 						
 						bombas[i3].x=0;
 						bombas[i3].y=0;
-						bombas[i3].moverBomba=false;
 						
 					}else {
 						
@@ -525,173 +517,160 @@ public class CodigoMotor {
 				if(mapa[i][i2].tipoBloque!=0) {
 					
 					
+					switch(jugador1.direccion) {
+					//arriba
+					case 0:
 						
-						
-							switch(jugador1.direccion) {
-							//arriba
-							case 0:
-								
-								if(jugador1.y-jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel) {
-									if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
-										jugador1.x=70;
-										jugador1.y=120;
-										generarMapa();
-										crearEnemigos();
-										borrarBonus();
-										poderMoverJugador=false;
+						if(jugador1.y-jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel) {
+							if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
+								jugador1.x=70;
+								jugador1.y=120;
+								generarMapa();
+								crearEnemigos();
+								borrarBonus();
+								poderMoverJugador=false;
 
-									}else {
-										if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
-											poderMoverJugador=false;
+							}else {
+								if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
+									poderMoverJugador=false;
 
-										}
-
-										
-									}
-									
-									
-								}else {
-									if(jugador1.y-jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y-jugador1.velocidad>=mapa[i][i2].y && jugador1.x>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo 
-											|| jugador1.y-jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y-jugador1.velocidad>=mapa[i][i2].y && jugador1.x+jugador1.largo>=mapa[i][i2].x && jugador1.x+jugador1.largo<=mapa[i][i2].x+mapa[i][i2].largo
-											 ) {
-										
-										poderMoverJugador=false;
-									}else {
-										
-										
-										poderMoverJugador=true;
-										
-								    }
-									
 								}
-									
-									
+
 								
-							
-							
-							break;
-							//abajo
-							case 1:
-								
-							
-								if(jugador1.y+jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel) {
-									if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
-										jugador1.x=70;
-										jugador1.y=120;
-										generarMapa();
-										crearEnemigos();
-										borrarBonus();
-										poderMoverJugador=false;
-
-									}else {
-										if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
-											poderMoverJugador=false;
-
-										}
-
-									}
-
-								}else {
-									if(jugador1.y+jugador1.alto+jugador1.velocidad>=mapa[i][i2].y && jugador1.y+jugador1.alto+jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo 
-											 || jugador1.y+jugador1.alto+jugador1.velocidad>=mapa[i][i2].y && jugador1.y+jugador1.alto+jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo>=mapa[i][i2].x && jugador1.x+jugador1.largo<=mapa[i][i2].x+mapa[i][i2].largo 
-											) {
-												
-												poderMoverJugador=false;
-											}else {
-												poderMoverJugador=true;
-												
-										    }
-								}
-									
-									
-							
-									
-								break;
-							//derecha
-							case 2:
-								
-								if(jugador1.y==yPortalSiguienteNivel && jugador1.x+jugador1.velocidad==xPortalSiguienteNivel) {
-									if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
-										jugador1.x=70;
-										jugador1.y=120;
-										generarMapa();
-										crearEnemigos();
-										borrarBonus();
-										poderMoverJugador=false;
-
-									}else {
-										if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
-											poderMoverJugador=false;
-
-										}
-
-									}
-								}else {
-									if(jugador1.y>=mapa[i][i2].y && jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
-										 	|| jugador1.y+jugador1.alto>=mapa[i][i2].y && jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo
-										 	) {
-											
-											poderMoverJugador=false;
-											
-										}else {
-											poderMoverJugador=true;
-											
-									    }
-								}
-							
-									
-							
-								
-								
-								
-
-							break;
-							//izquierda
-							case 3:
-								
-								if(jugador1.y==yPortalSiguienteNivel && jugador1.x-jugador1.velocidad==xPortalSiguienteNivel) {
-									if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
-										jugador1.x=70;
-										jugador1.y=120;
-										generarMapa();
-										crearEnemigos();
-										borrarBonus();
-										poderMoverJugador=false;
-
-									}else {
-										if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
-											poderMoverJugador=false;
-
-										}
-
-									}
-
-								}else {
-									if(jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
-											|| jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y+jugador1.largo>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo
-											) {
-										
-										//System.out.println("X: "+jugador1.x+" y:: "+jugador1.y+" X B:: "+mapa[i][i2].x+" Y B :: "+mapa[i][i2].y);
-										poderMoverJugador=false;
-									}else {
-										poderMoverJugador=true;
-										
-								    }
-									
-								}
-									
-								
-								
-								
-
-							break;
-							
 							}
+							
+							
+						}else {
+							if(jugador1.y-jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y-jugador1.velocidad>=mapa[i][i2].y && jugador1.x>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo 
+									|| jugador1.y-jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y-jugador1.velocidad>=mapa[i][i2].y && jugador1.x+jugador1.largo>=mapa[i][i2].x && jugador1.x+jugador1.largo<=mapa[i][i2].x+mapa[i][i2].largo) {
+								
+								poderMoverJugador=false;
+							}else {
+								
+								
+								poderMoverJugador=true;
+								
+						    }
+						}
+							
+							
+						
+					
+					
+					break;
+					//abajo
+					case 1:
+						
+					
+						if(jugador1.y+jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel) {
+							if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
+								jugador1.x=70;
+								jugador1.y=120;
+								generarMapa();
+								crearEnemigos();
+								borrarBonus();
+								poderMoverJugador=false;
+
+							}else {
+								if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
+									poderMoverJugador=false;
+
+								}
+
+							}
+
+						}else {
+							if(jugador1.y+jugador1.alto+jugador1.velocidad>=mapa[i][i2].y && jugador1.y+jugador1.alto+jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x>=mapa[i][i2].x && jugador1.x<=mapa[i][i2].x+mapa[i][i2].largo 
+									 || jugador1.y+jugador1.alto+jugador1.velocidad>=mapa[i][i2].y && jugador1.y+jugador1.alto+jugador1.velocidad<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo>=mapa[i][i2].x && jugador1.x+jugador1.largo<=mapa[i][i2].x+mapa[i][i2].largo   ) {
+										
+										poderMoverJugador=false;
+									}else {
+										poderMoverJugador=true;
+										
+								    }
+						}
+							
+							
+					
+							
+						break;
+					//derecha
+					case 2:
+						
+						if(jugador1.y==yPortalSiguienteNivel && jugador1.x+jugador1.velocidad==xPortalSiguienteNivel) {
+							if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
+								jugador1.x=70;
+								jugador1.y=120;
+								generarMapa();
+								crearEnemigos();
+								borrarBonus();
+								poderMoverJugador=false;
+
+							}else {
+								if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
+									poderMoverJugador=false;
+
+								}
+
+							}
+						}else {
+							if(jugador1.y>=mapa[i][i2].y && jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
+								 	|| jugador1.y+jugador1.alto>=mapa[i][i2].y && jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.x+jugador1.largo+jugador1.velocidad>=mapa[i][i2].x && jugador1.x+jugador1.largo+jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo) {
+									
+									poderMoverJugador=false;
+									
+								}else {
+									poderMoverJugador=true;
+									
+							    }
+						}
+					
+							
+					
 						
 						
+						
+
+					break;
+					//izquierda
+					case 3:
+						
+						if(jugador1.y==yPortalSiguienteNivel && jugador1.x-jugador1.velocidad==xPortalSiguienteNivel) {
+							if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
+								jugador1.x=70;
+								jugador1.y=120;
+								generarMapa();
+								crearEnemigos();
+								borrarBonus();
+								poderMoverJugador=false;
+
+							}else {
+								if(mapa[i][i2].x!=0 && mapa[i][i2].tipoBloque==3) {
+									poderMoverJugador=false;
+
+								}
+
+							}
+
+						}else {
+							if(jugador1.y<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo 
+									|| jugador1.y+jugador1.alto<=mapa[i][i2].y+mapa[i][i2].alto && jugador1.y+jugador1.largo>=mapa[i][i2].y && jugador1.x-jugador1.velocidad>=mapa[i][i2].x && jugador1.x-jugador1.velocidad<=mapa[i][i2].x+mapa[i][i2].largo) {
+								
+								//System.out.println("X: "+jugador1.x+" y:: "+jugador1.y+" X B:: "+mapa[i][i2].x+" Y B :: "+mapa[i][i2].y);
+								poderMoverJugador=false;
+							}else {
+								poderMoverJugador=true;
+								
+						    }
+						}
+							
+						
+						
+						
+
+					break;
 					
-					
-					
+					}
 				}
 				
 			
@@ -721,12 +700,12 @@ public class CodigoMotor {
 			poderMoverJugador=false;
 
 		}
-		/*if(patearBomba()==true) {
+		if(patearBomba()==true) {
 			poderMoverJugador=false;
-		}*/
-		/*if(jugador1.vidas <1) {
+		}
+		if(jugador1.vidas <1) {
 			poderMoverJugador=false;
-		}*/
+		}
 
 		
 		
@@ -742,8 +721,7 @@ public class CodigoMotor {
 					//arriba
 					case 0:
 						if(jugador1.y-50==bombas[i].y && jugador1.x==bombas[i].x){
-							bombas[i].moverBomba=true;
-							bombas[i].direccion=0;
+							
 							hayBomba=true;
 						}else {
 							hayBomba=false;
@@ -752,10 +730,6 @@ public class CodigoMotor {
 					//abajo
 					case 1:
 						if(jugador1.y+50==bombas[i].y && jugador1.x==bombas[i].x) {
-							bombas[i].moverBomba=true;
-
-							bombas[i].direccion=1;
-
 							hayBomba=true;
 						}else {
 							hayBomba=false;
@@ -766,11 +740,7 @@ public class CodigoMotor {
 					//derecha
 					case 2:
 						if(jugador1.x+50==bombas[i].x && jugador1.y==bombas[i].y) {
-							bombas[i].moverBomba=true;
-
-							bombas[i].direccion=2;
 							hayBomba=true;
-
 						}else {
 							hayBomba=false;
 						}
@@ -779,9 +749,6 @@ public class CodigoMotor {
 					case 3:
 						
 						if(jugador1.x-50==bombas[i].x && jugador1.y==bombas[i].y) {
-							bombas[i].moverBomba=true;
-
-							bombas[i].direccion=3;
 							hayBomba=true;
 						}else {
 							hayBomba=false;
@@ -801,126 +768,56 @@ public class CodigoMotor {
 		}
 		return hayBomba;
 	}
-	public void moverBombas() {
-			boolean moverBomba=false;
-			for(int i=0;i<bombas.length;i++) {
-				
-				try {
-					if(bombas[i].x!=0 && bombas[i].moverBomba==true) {
-						
-						for(int f=0;f<10;f++) {
-							for(int c=0;c<13;c++) {
-								
-								if(mapa[f][c].tipoBloque!=0) {
-									
-									for(int i2=0;i2<enemigos.length;i2++) {
-										switch(bombas[i].direccion) {
-										case 0:
-											if(bombas[i].y-50==mapa[f][c].y && bombas[i].x==mapa[f][c].x || bombas[i].y-50<100 
-												|| bombas[i].y-50==enemigos[i2].y && bombas[i].x==enemigos[i2].x ) {
-												moverBomba=false;
-											}else {
-												moverBomba=true;
-											}
-												
-											
-								
-										break;
-										
-										case 1:
-											if(bombas[i].y+50==mapa[f][c].y && bombas[i].x==mapa[f][c].x || bombas[i].y+50>limiteY-90
-											 || bombas[i].y+50==enemigos[i2].y && bombas[i].x==enemigos[i2].x) {
-												moverBomba=false;
-
-											}else {
-												moverBomba=true;
-
-
-											}
-									
-										break;
-										
-										case 2:
-											if(bombas[i].x+50==mapa[f][c].x && bombas[i].y==mapa[f][c].y || bombas[i].x+50>limiteX-80
-													|| bombas[i].y==enemigos[i2].y && bombas[i].x+50==enemigos[i2].x) {
-												moverBomba=false;
-											}else {
-												moverBomba=true;
-											}
-										
-										break;
-										
-										case 3:
-											if(bombas[i].x-50==mapa[f][c].x && bombas[i].y==mapa[f][c].y || bombas[i].x-50<50
-													|| bombas[i].y==enemigos[i2].y && bombas[i].x-50==enemigos[i2].x) {
-												moverBomba=false;
-											}else {
-												moverBomba=true;
-
-											}
-										
-										break;
-										}
-									}
-									
-								}else {
-									moverBomba=true;
-
-								}
-								
-								if(moverBomba==false) {
-									f=10;
-									c=13;
-								}
-								
-								
-							}
-						}
-						
-						if(moverBomba==true) {
-							switch(bombas[i].direccion) {
-							case 0:
-								bombas[i].y-=50;
-							break;
-							
-							case 1:
-								bombas[i].y+=50;
-
-							break;
-							
-							case 2:
-								bombas[i].x+=50;
-
-							break;
-							
-							case 3:
-								bombas[i].x-=50;
-
-							break;
-							}
-						}
-					}
-					
-					
-
-					
-				}catch(Exception e) {
-					
-				}
-				
-				
-				
-			}
-			
-			
-		
-	}
-	/*public boolean patearBomba() {
+	public boolean patearBomba() {
 		boolean moverBomba=false,hayBomba=false;
 		if(jugador1.patearBomba==true) {
 			
 			
-			
+			for(int i=0;i<bombas.length;i++) {
+				try {
+					if(bombas[i].x!=0) {
+						switch(jugador1.direccion) {
+						//arriba
+						case 0:
+							if(jugador1.y-50==bombas[i].y && jugador1.x==bombas[i].x){
+								
+								hayBomba=true;
+							}else {
+								hayBomba=false;
+							}
+						break;
+						//abajo
+						case 1:
+							if(jugador1.y+50==bombas[i].y && jugador1.x==bombas[i].x) {
+								hayBomba=true;
+							}else {
+								hayBomba=false;
+							
+
+							}
+						break;
+						//derecha
+						case 2:
+							if(jugador1.x+50==bombas[i].x && jugador1.y==bombas[i].y) {
+								hayBomba=true;
+							}else {
+								hayBomba=false;
+							}
+						break;
+						//izquierda
+						case 3:
+							
+							if(jugador1.x-50==bombas[i].x && jugador1.y==bombas[i].y) {
+								hayBomba=true;
+							}else {
+								hayBomba=false;
+							}
+						break;
+						}
+						
+						
+					}
+					
 					
 
 					if(hayBomba==true) {
@@ -1008,14 +905,14 @@ public class CodigoMotor {
 					
 				}
 				
-			
+			}
 			
 		
 		}
 		
 		return moverBomba;
 		
-	}*/
+	}
 	public void comprobarSiTomoBonus() {
 		for(int i=0;i<bonus.length;i++) {
 			try {
@@ -1143,173 +1040,121 @@ public class CodigoMotor {
 			//aqui preguntamos si el enemigo esta muerto o no
 			if(enemigos[i].vida!=0) {
 				
-				//evaluamos si las cordenadas dele enmigo son igual a las del jugador
-				if(jugador1.x==enemigos[i].x && jugador1.y==enemigos[i].y) {
-					if(vidas-1>=0) {
-						//vidas--;
-						
-					}else {
-						gameOver=true;
-						System.out.println("GAME OVER LINEA 1153");
-					}
-				}
-				
 				//evaluamos todo el mapa para ver si el enemigo se podra mover hacia la direcciona  al que va o no.. esto pa saber si hay un muro en su camino
 				for(int filas=0;filas<10;filas++) {
 					for(int columnas=0;columnas<13;columnas++) {
 						
-						
-						//for para validar si hacia donde se va a mover hay bombas
-						for(int b=0;b<bombas.length;b++) {
-							
-							try {
-								switch(enemigos[i].direccion) {
-								//arriba
-								case 0:
-									if(enemigos[i].y-enemigos[i].velocidad>100) {
+							switch(enemigos[i].direccion) {
+							//arriba
+							case 0:
+								if(enemigos[i].y-enemigos[i].velocidad>100) {
+									
+									if(enemigos[i].y-enemigos[i].velocidad<= mapa[filas][columnas].y+mapa[filas][columnas].alto && enemigos[i].y>mapa[filas][columnas].y && enemigos[i].x>=mapa[filas][columnas].x
+											&& enemigos[i].x<=mapa[filas][columnas].x+mapa[filas][columnas].largo ) {
 										
-										if(enemigos[i].y-enemigos[i].velocidad<= mapa[filas][columnas].y+mapa[filas][columnas].alto && enemigos[i].y>mapa[filas][columnas].y && enemigos[i].x>=mapa[filas][columnas].x
-												&& enemigos[i].x<=mapa[filas][columnas].x+mapa[filas][columnas].largo ) {
-											
 
-											if(mapa[filas][columnas].tipoBloque==0 && enemigos[i].y-enemigos[i].velocidad!=bombas[b].y && enemigos[i].x!=bombas[b].x) {
-												moverEnemigo=true;
-												
-											}else {
-												moverEnemigo=false;
-												filas=10;
-												columnas=15;
-											}
-											if(enemigos[i].y-enemigos[i].velocidad==bombas[b].y && enemigos[i].x-enemigos[i].velocidad==bombas[b].x) {
-												moverEnemigo=false;
-												filas=10;
-												columnas=13;
-												b=10;
-												
-											}
-											
-										}else {
+										if(mapa[filas][columnas].tipoBloque==0) {
 											moverEnemigo=true;
 											
-										}
-									}else {
-										moverEnemigo=false;
-
-									}
-									
-								break;
-								//abajo
-								case 1:
-									if(enemigos[i].y+enemigos[i].velocidad<limiteY-90 ) {
-										
-										if(enemigos[i].y+enemigos[i].velocidad+enemigos[i].alto<= mapa[filas][columnas].y+mapa[filas][columnas].alto && enemigos[i].y+enemigos[i].alto+enemigos[i].velocidad>=mapa[filas][columnas].y && enemigos[i].x>=mapa[filas][columnas].x
-												&& enemigos[i].x<=mapa[filas][columnas].x+mapa[filas][columnas].largo ) {
-											
-
-											if(mapa[filas][columnas].tipoBloque==0 && enemigos[i].y+enemigos[i].velocidad+enemigos[i].alto!=bombas[b].y && enemigos[i].x!=bombas[b].x) {
-												moverEnemigo=true;
-												
-											}else {
-												moverEnemigo=false;
-												filas=10;
-												columnas=15;
-											}
-											if(enemigos[i].y+enemigos[i].velocidad==bombas[b].y && enemigos[i].x==bombas[b].x) {
-												moverEnemigo=false;
-												filas=10;
-												columnas=13;
-												b=10;
-												
-											}
-											
 										}else {
-											moverEnemigo=true;
-											
+											moverEnemigo=false;
+											filas=10;
+											columnas=15;
 										}
-									}else {
-										moverEnemigo=false;
-
-									}
-									
-								break;
-								//derecha
-								case 2:
-									if(enemigos[i].x+enemigos[i].velocidad<limiteX-80) {
 										
-										if(enemigos[i].x+enemigos[i].velocidad+enemigos[i].largo<= mapa[filas][columnas].x+mapa[filas][columnas].largo && enemigos[i].x+enemigos[i].largo+enemigos[i].velocidad>=mapa[filas][columnas].x && enemigos[i].y>=mapa[filas][columnas].y
-												&& enemigos[i].y<=mapa[filas][columnas].y+mapa[filas][columnas].alto ) {
-											
-
-											if(mapa[filas][columnas].tipoBloque==0 && enemigos[i].y!=bombas[b].y && enemigos[i].x+enemigos[i].velocidad+enemigos[i].largo!=bombas[b].x) {
-												moverEnemigo=true;
-												
-											}else {
-												moverEnemigo=false;
-												filas=10;
-												columnas=15;
-											}
-											if(enemigos[i].y==bombas[b].y && enemigos[i].x+enemigos[i].velocidad==bombas[b].x) {
-												moverEnemigo=false;
-												filas=10;
-												columnas=13;
-												b=10;
-												
-											}
-											
-										}else {
-											moverEnemigo=true;
-											
-										}
 									}else {
-										moverEnemigo=false;
-
-									}
-									
-								break;
-								//izquierda
-								case 3:
-									if(enemigos[i].x-enemigos[i].velocidad>50) {
+										moverEnemigo=true;
 										
-										//pregunto si hacia donde se movera en enemigo hay un bloque
-										if(enemigos[i].x-enemigos[i].velocidad<= mapa[filas][columnas].x+mapa[filas][columnas].largo && enemigos[i].x-enemigos[i].velocidad>=mapa[filas][columnas].x && enemigos[i].y>=mapa[filas][columnas].y
-												&& enemigos[i].y<=mapa[filas][columnas].y+mapa[filas][columnas].alto ) {
-											
-											
-											if(mapa[filas][columnas].tipoBloque==0) {
-												moverEnemigo=true;
-												
-											}else {
-												moverEnemigo=false;
-												filas=10;
-												columnas=15;
-											}
-											//tienes que poner que si hay una bomba ya te sales y ya no sigues evaluando por que despues te va
-											// a decir que no hay una bomba y se movera
-											if(enemigos[i].y==bombas[b].y && enemigos[i].x-enemigos[i].velocidad==bombas[b].x) {
-												moverEnemigo=false;
-												filas=10;
-												columnas=13;
-												b=10;
-												
-											}
-											
-										}else {
-											moverEnemigo=true;
-											
-										}
-									}else {
-										moverEnemigo=false;
-
 									}
-									
-								break;
+								}else {
+									moverEnemigo=false;
+
+								}
 								
-							  }
-							}catch(Exception e) {
-								//System.out.println("Error : por que el arreglo de las bombas y enemigos no esta lleno y al momento de acceder a una poscion vacia da error"+e);
-							}
-						}
+							break;
+							//abajo
+							case 1:
+								if(enemigos[i].y+enemigos[i].velocidad<limiteY-90) {
+									
+									if(enemigos[i].y+enemigos[i].velocidad+enemigos[i].alto<= mapa[filas][columnas].y+mapa[filas][columnas].alto && enemigos[i].y+enemigos[i].alto+enemigos[i].velocidad>=mapa[filas][columnas].y && enemigos[i].x>=mapa[filas][columnas].x
+											&& enemigos[i].x<=mapa[filas][columnas].x+mapa[filas][columnas].largo ) {
+										
+
+										if(mapa[filas][columnas].tipoBloque==0) {
+											moverEnemigo=true;
+											
+										}else {
+											moverEnemigo=false;
+											filas=10;
+											columnas=15;
+										}
+										
+									}else {
+										moverEnemigo=true;
+										
+									}
+								}else {
+									moverEnemigo=false;
+
+								}
+								
+							break;
+							//derecha
+							case 2:
+								if(enemigos[i].x+enemigos[i].velocidad<limiteX-80) {
+									
+									if(enemigos[i].x+enemigos[i].velocidad+enemigos[i].largo<= mapa[filas][columnas].x+mapa[filas][columnas].largo && enemigos[i].x+enemigos[i].largo+enemigos[i].velocidad>=mapa[filas][columnas].x && enemigos[i].y>=mapa[filas][columnas].y
+											&& enemigos[i].y<=mapa[filas][columnas].y+mapa[filas][columnas].alto ) {
+										
+
+										if(mapa[filas][columnas].tipoBloque==0) {
+											moverEnemigo=true;
+											
+										}else {
+											moverEnemigo=false;
+											filas=10;
+											columnas=15;
+										}
+										
+									}else {
+										moverEnemigo=true;
+										
+									}
+								}else {
+									moverEnemigo=false;
+
+								}
+								
+							break;
+							//izquierda
+							case 3:
+								if(enemigos[i].x-enemigos[i].velocidad>50) {
+									
+									if(enemigos[i].x-enemigos[i].velocidad<= mapa[filas][columnas].x+mapa[filas][columnas].largo && enemigos[i].x-enemigos[i].velocidad>=mapa[filas][columnas].x && enemigos[i].y>=mapa[filas][columnas].y
+											&& enemigos[i].y<=mapa[filas][columnas].y+mapa[filas][columnas].alto ) {
+										
+
+										if(mapa[filas][columnas].tipoBloque==0) {
+											moverEnemigo=true;
+											
+										}else {
+											moverEnemigo=false;
+											filas=10;
+											columnas=15;
+										}
+										
+									}else {
+										moverEnemigo=true;
+										
+									}
+								}else {
+									moverEnemigo=false;
+
+								}
+								
+							break;
 							
+						  }
 						
 						
 						
@@ -1318,8 +1163,6 @@ public class CodigoMotor {
 					
 				
 				}
-				
-				//validamos si 
 				
 				if(moverEnemigo==true) {
 					switch(enemigos[i].direccion) {
@@ -1343,8 +1186,6 @@ public class CodigoMotor {
 				}else {
 					enemigos[i].direccion=rand.nextInt(3);
 				}
-				
-				
 			}
 		}
 		
@@ -1359,14 +1200,12 @@ public class CodigoMotor {
 		crearEnemigos();
 		
 		
-		
 		//tiempos 1500
 	  	timer.schedule(explotarBomba, 0, 1);
 	  	timer.schedule(moverEnemigos, 0, 200);
 	  	//cada 300 milisegundos va a cambiar la dieccion enemiga de algun enemigo
 	  	timer.schedule(cambiarDireccionEnemiga, 0, 300);
 	    timer.schedule(sumartiempo, 0, 1000);
-	    timer.schedule(moverBomba, 0, 200);
 	  	//timer.schedule(moverJugador, 0, 1);
 
 
@@ -1494,13 +1333,6 @@ public class CodigoMotor {
 						
 						
 						
-					}
-					if(e.getKeyCode()==90) {
-						jugador1.x=70;
-						jugador1.y=120;
-						generarMapa();
-						crearEnemigos();
-						borrarBonus();
 					}
 					
 					
