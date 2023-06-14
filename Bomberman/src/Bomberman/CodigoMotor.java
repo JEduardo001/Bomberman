@@ -33,6 +33,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
@@ -44,7 +45,7 @@ public class CodigoMotor {
 	private JPanel panel = new JPanel();
 	private JFrame frame;
 	private int vidas=5;
-	private int tiempo=0;
+	private int tiempo=300, cuadritos=25, termino=0;
 	private int puntaje=0;
 	private boolean isVisible = true;
 	private Font Vidas = new Font("impact", Font.PLAIN, 40);
@@ -72,6 +73,7 @@ public class CodigoMotor {
 	//juego
 	 Random random = new Random();
 	JPanel tablero = new JPanel();
+	JPanel login = new JPanel();
 	int limiteX=780, limiteY=700;
 	static Random rand = new Random();
 	boolean gameOver=false;
@@ -139,6 +141,15 @@ public class CodigoMotor {
        	
         }
 	};
+	TimerTask sumartiempoBarra = new TimerTask() {
+        public void run() {
+        	sumartiempoBarritas();
+       	
+        }
+	};
+	
+	
+	
 	 TimerTask moverEnemigos = new TimerTask() {
          public void run() {
         	 moverEnemigos();
@@ -210,7 +221,8 @@ public class CodigoMotor {
 	};*/
 
 	public CodigoMotor() {
-		initialize();
+		initialize();//pagina de bienvenida
+		//initialize1();//pagina de  cuando inicia juego
 	}
 
 	public void crearBomba() {
@@ -294,7 +306,7 @@ public class CodigoMotor {
 		}
 	}
 	public void sumartiempo() {
-		tiempo++;
+		tiempo--;
 		
 		tiempos.setText("Tiempo:  "+tiempo);
 		puntajes.setText(puntaje+" pts");
@@ -303,6 +315,12 @@ public class CodigoMotor {
 		
 		panel.repaint();
 		panel.revalidate();
+	}
+	
+	public void sumartiempoBarritas() {
+		cuadritos--;
+	
+	
 	}
 	
 	public void explotarBomba() {
@@ -1363,46 +1381,42 @@ public class CodigoMotor {
 			System.out.println(i+" ::: "+enemigos[i].direccion);
 		}*/
 	}
-	
+	private void initialize1() {
+		
+		frame = new JFrame();
+		frame.setBounds(00, 0, limiteX, limiteY);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+
+        login.add(new Menu());
+		
+		frame.getContentPane().add(login, BorderLayout.NORTH);
+		frame.getContentPane().revalidate();
+		frame.getContentPane().repaint();
+		
+	}
 	private void initialize() {
 		
-		generarMapa();
-		crearEnemigos();
-		
-		
-		
-		//tiempos 1500
-	  	timer.schedule(explotarBomba, 0, 1);
-	  	timer.schedule(moverEnemigos, 0, 200);
-	  	//cada 300 milisegundos va a cambiar la dieccion enemiga de algun enemigo
-	  	timer.schedule(cambiarDireccionEnemiga, 0, 300);
-	    timer.schedule(sumartiempo, 0, 1000);
-	    timer.schedule(moverBomba, 0, 200);
-	  	//timer.schedule(moverJugador, 0, 1);
-
-
-
 		frame = new JFrame();
 		frame.setBounds(00, 0, limiteX, limiteY);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		/*
-		panel.setBackground(new Color(255, 128, 0));
-		panel.setLayout(new GridLayout(1,3));//aqui eliges que tipo de layout quieres para los puntajes
-		
-		
+		panel.setBackground(new Color(255, 128, 0));	
 		panel.add(tiempos);
-		
-		
 		panel.add(puntajes);
-		
 	//	panel.add(new MyGraphics());
 	
 		panel.add(Vidas);
 		*/
 	//	frame.getContentPane().add(panel, BorderLayout.NORTH);
 	//	tablero.setBackground(new Color(0, 0, 0));
+		
+		frame.getContentPane().remove(login);
 		frame.getContentPane().add(tablero, BorderLayout.NORTH);
+		
+		frame.getContentPane().revalidate();
+		frame.getContentPane().repaint();
 		
 		tablero.add(new MyGraphics());
 		
@@ -1527,7 +1541,20 @@ public class CodigoMotor {
 				
 			}});
 		
+		generarMapa();
+		crearEnemigos();
 		
+		
+		
+		//tiempos 1500
+	  	timer.schedule(explotarBomba, 0, 1);
+	  	timer.schedule(moverEnemigos, 0, 200);
+	  	//cada 300 milisegundos va a cambiar la dieccion enemiga de algun enemigo
+	  	timer.schedule(cambiarDireccionEnemiga, 0, 300);
+	    timer.schedule(sumartiempo, 0, 1000);
+	    timer.schedule(sumartiempoBarra, 0, 12000);
+	    timer.schedule(moverBomba, 0, 200);
+	  	//timer.schedule(moverJugador, 0, 1);
 	}
 	
 	
@@ -1695,43 +1722,74 @@ public class CodigoMotor {
         	g.fill3DRect(0, 0, 780, 90, true);
         	g.setColor(Color.decode("#860502"));
         	g.fill3DRect(90, 10, 50, 50, true);
-        	g.fill3DRect(300, 10, 300, 50, true);
-        	
+        	g.fill3DRect(250, 10, 300, 50, true);
+        	g.fill3DRect(650, 10, 95, 50, true);
 
         	
         	
         	
-        	for(int e=0; e<27; e++) {
-        	g.fill3DRect(20+25*e-3, 70, 20, 10, true);
+        	for(int e=0; e<25; e++) {
+        	g.fill3DRect(70+25*e-3, 70, 20, 10, true);
         	}
         	
         	
         	
         	g.setColor(Color.black);
         	g.fill3DRect(95, 15, 40, 40, true);
-        	g.fill3DRect(305, 15, 290, 40, true);
+        	g.fill3DRect(255, 15, 290, 40, true);
+        	g.fill3DRect(655, 15, 85, 40, true);
         	
-        	for (int i=0; i<27; i++) {
+        	for (int i=0; i<25; i++) {
         		
         		
-        		g.fill3DRect(20+25*i, 73, 15, 5, true);
+        		g.fill3DRect(70+25*i, 73, 15, 5, true);
         	
         	
         	}
+        	////////////////se pregunta si se termino el tiempo
+        	int calculo;
+        	if(cuadritos == -1 && termino==0) {
+        		JOptionPane.showMessageDialog(null, "Se acabo el tiempo perdiste...");
+        		termino++;
+        	}else {
+        		 calculo = 25- cuadritos;
+        		 
+        		 for (int i=0; i<calculo-1; i++) {
+             		
+        			 g.setColor(Color.decode("#FFFFFF"));
+             		g.fill3DRect(70+25*i, 73, 15, 5, true);
+             	
+             	
+             	}
+        	}
+        	
+        	
+            
         	
         	
         	//g.drawImage(imagen, x, y, limiteY, limiteX, null);
-        	g.drawImage(reloj,700, 10,40,60,null );
+        	//g.drawImage(reloj,700, 10,40,60,null );
+        	
+        	// Score
+        	g.setFont(Score);
+        	g.setColor(Color.orange);
+        	g.drawString("TIME", 565, 50);
+        	
+			g.setFont(Puntaje);
+			g.setColor(Color.white);
+			g.drawString(""+tiempo, 666, 50);
+        	
+        	
         	g.drawImage(cara, 5, 10, 80, 80, null);
         	
 			// Score
         	g.setFont(Score);
         	g.setColor(Color.orange);
-        	g.drawString("SC", 250, 50);
+        	g.drawString("SC", 200, 50);
         	
 			g.setFont(Puntaje);
 			g.setColor(Color.white);
-			g.drawString(""+puntaje, 315, 50);
+			g.drawString(""+puntaje, 265, 50);
 			
         
 			// Vidas
@@ -1744,9 +1802,46 @@ public class CodigoMotor {
         
     }
 	
-	public class Menu extends JPanel {
+	public class Menu extends JComponent {
 
-		public Menu() {
+		Menu() {
+            setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
+        }
+		
+		@Override
+	    protected void paintComponent(Graphics g) {
+	        super.paintComponent(g);
+	        
+	        Menu(g);
+	    	g.setColor(Color.decode("#0000FF"));
+			g.fill3DRect(0, 0, 780, 700, true);
+			
+			//edificio izquierda abajo
+			g.drawImage(edificios, -200, 100,1200,600, this);
+			g.drawImage(edificio, -240, 150,600,600, this);
+			g.drawImage(nube1, 600, 420,150,100, this);
+			g.drawImage(edificioD, 420, 150,600,600, this);
+			g.drawImage(nube1, 40, 350,150,100, this);
+			g.drawImage(letras, 80, 50,600,400, this);
+			g.drawImage(zepelin, 230, 350,150,100, this);
+			
+			
+			 g.setColor(Color.BLACK);
+	         
+	         // Establecer la fuente del texto
+	         g.setFont(new Font("Arial", Font.PLAIN, 18));
+	         
+	         // Obtener las dimensiones del panel
+	         int width = getWidth();
+	         int height = getHeight();
+	         
+	         
+	         login.repaint();
+			login.revalidate();
+	    }
+		
+		
+		public void Menu(Graphics g) {
 			setVisible(true);
 			setSize(780, 700);
 			setLayout(null);
@@ -1791,48 +1886,13 @@ public class CodigoMotor {
 
 		
 			
-			
+			login.repaint();
+			login.revalidate();
 		}
 		
 		
 		
-	    @Override
-	    protected void paintComponent(Graphics g) {
-	        super.paintComponent(g);
-	    	g.setColor(Color.decode("#0000FF"));
-			g.fill3DRect(0, 0, 780, 700, true);
-			
-			//edificio izquierda abajo
-			g.drawImage(edificios, -200, 100,1200,600, this);
-			g.drawImage(edificio, -240, 150,600,600, this);
-			g.drawImage(nube1, 600, 420,150,100, this);
-			g.drawImage(edificioD, 420, 150,600,600, this);
-			g.drawImage(nube1, 40, 350,150,100, this);
-			g.drawImage(letras, 80, 50,600,400, this);
-			g.drawImage(zepelin, 230, 350,150,100, this);
-			
-			
-			 g.setColor(Color.BLACK);
-	         
-	         // Establecer la fuente del texto
-	         g.setFont(new Font("Arial", Font.PLAIN, 18));
-	         
-	         // Obtener las dimensiones del panel
-	         int width = getWidth();
-	         int height = getHeight();
-	         
-	         // Calcular la posición del texto en el centro del panel
-	         FontMetrics fm = g.getFontMetrics();
-	         int textWidth = fm.stringWidth("Presiona enter para comenzar");
-	         int textHeight = fm.getHeight();
-	         int x = (width - textWidth) / 2;
-	         double y = (height - textHeight) /1.3;
-	         
-	         // Dibujar el texto si isVisible es true
-	         if (isVisible) {
-	             g.drawString("Presiona enter para comenzar", x, (int) y);
-	         }
-	    }
+	    
 	
 	}
 	private void map(Graphics g) {
