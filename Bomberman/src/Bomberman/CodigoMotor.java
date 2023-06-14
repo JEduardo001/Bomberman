@@ -5,9 +5,11 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +29,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,6 +46,7 @@ public class CodigoMotor {
 	private int vidas=5;
 	private int tiempo=0;
 	private int puntaje=0;
+	private boolean isVisible = true;
 	private Font Vidas = new Font("impact", Font.PLAIN, 40);
 	private Font Score = new Font("impact", Font.PLAIN, 40);
 	private Font Puntaje = new Font("impact", Font.PLAIN, 38);
@@ -56,7 +60,14 @@ public class CodigoMotor {
 	Image muroArriba = Toolkit.getDefaultToolkit().getImage("muroArriba.png");
 	Image muroIrrompible = Toolkit.getDefaultToolkit().getImage("muroIrrompible.png");
 	Image muroRompible = Toolkit.getDefaultToolkit().getImage("muroRompible.png");
-	
+	Image edificio = Toolkit.getDefaultToolkit().getImage("Edificio.png");
+	Image edificioD = Toolkit.getDefaultToolkit().getImage("EdificioD.png");
+	Image letras = Toolkit.getDefaultToolkit().getImage("letras.png");
+	Image edificios = Toolkit.getDefaultToolkit().getImage("edificioss.png");
+	Image nube1 = Toolkit.getDefaultToolkit().getImage("nube1.png");
+	Image nube2 = Toolkit.getDefaultToolkit().getImage("nube2.png");
+	Image zepelin = Toolkit.getDefaultToolkit().getImage("zepelin.png");
+
 
 	//juego
 	 Random random = new Random();
@@ -1733,18 +1744,107 @@ public class CodigoMotor {
         
     }
 	
+	public class Menu extends JPanel {
+
+		public Menu() {
+			setVisible(true);
+			setSize(780, 700);
+			setLayout(null);
+			setLocation(100, 100);
+			
+			//Color personalizado
+			
+			
+			edificio=new ImageIcon("Edificio.png").getImage();  
+			edificioD=new ImageIcon("EdificioD.png").getImage();  
+			letras=new ImageIcon("letras.png").getImage();
+			edificios=new ImageIcon("edificioss.png").getImage();
+			
+			nube1=new ImageIcon("nube1.png").getImage();  
+			nube2=new ImageIcon("nube2.png").getImage();
+			zepelin=new ImageIcon("zepelin.png").getImage();
+			
+			MediaTracker tracker = new MediaTracker(this); // 'componente' puede ser un JFrame, JPanel u otro componente gráfico
+			tracker.addImage(edificio, 0);
+			tracker.addImage(edificioD, 0);
+			tracker.addImage(letras, 0);
+			tracker.addImage(edificios, 0);
+			tracker.addImage(nube1, 0);
+			tracker.addImage(nube2, 0);
+			tracker.addImage(zepelin, 0);
+			try {
+			    tracker.waitForAll();
+			} catch (InterruptedException e) {
+			    e.printStackTrace();
+			}
+		
+			repaint();
+			revalidate();
+			
+		
+			
+			//va a dentro de un timer que repinta cada 500 milisegundos	
+			////////////////////////////
+			repaint(); 
+			isVisible = !isVisible;
+			///////////////////////
+
+		
+			
+			
+		}
+		
+		
+		
+	    @Override
+	    protected void paintComponent(Graphics g) {
+	        super.paintComponent(g);
+	    	g.setColor(Color.decode("#0000FF"));
+			g.fill3DRect(0, 0, 780, 700, true);
+			
+			//edificio izquierda abajo
+			g.drawImage(edificios, -200, 100,1200,600, this);
+			g.drawImage(edificio, -240, 150,600,600, this);
+			g.drawImage(nube1, 600, 420,150,100, this);
+			g.drawImage(edificioD, 420, 150,600,600, this);
+			g.drawImage(nube1, 40, 350,150,100, this);
+			g.drawImage(letras, 80, 50,600,400, this);
+			g.drawImage(zepelin, 230, 350,150,100, this);
+			
+			
+			 g.setColor(Color.BLACK);
+	         
+	         // Establecer la fuente del texto
+	         g.setFont(new Font("Arial", Font.PLAIN, 18));
+	         
+	         // Obtener las dimensiones del panel
+	         int width = getWidth();
+	         int height = getHeight();
+	         
+	         // Calcular la posición del texto en el centro del panel
+	         FontMetrics fm = g.getFontMetrics();
+	         int textWidth = fm.stringWidth("Presiona enter para comenzar");
+	         int textHeight = fm.getHeight();
+	         int x = (width - textWidth) / 2;
+	         double y = (height - textHeight) /1.3;
+	         
+	         // Dibujar el texto si isVisible es true
+	         if (isVisible) {
+	             g.drawString("Presiona enter para comenzar", x, (int) y);
+	         }
+	    }
 	
-	
+	}
 	private void map(Graphics g) {
 		g.setColor(Color.decode("#1DB37B"));
 		g.fill3DRect(0, 90, 780, 750, true);
 		
-	
+		
 		for(int i=0; i<15; i++ ) {
 			
 			g.drawImage(muroArriba, 40+i*60, 90,60,20, null);
 		}
-	
+		
 		
 		
 		int y=0;
@@ -1755,14 +1855,14 @@ public class CodigoMotor {
 			}else {
 				y+=25;
 			}
-				
-		g.drawImage(muro, 5, y,60,40, null);
-		
+			
+			g.drawImage(muro, 5, y,60,40, null);
+			
 		}
-
+		
 		g.drawImage(curva, 5, 605,80,50, null);
 		for(int e=0; e<20; e++) {
-		g.drawImage(cuadroAbajo, 55+e*40, 635,70,30, null);
+			g.drawImage(cuadroAbajo, 55+e*40, 635,70,30, null);
 		}
 		
 		int y2=0;
@@ -1773,12 +1873,12 @@ public class CodigoMotor {
 			}else {
 				y2+=25;
 			}
-				
-	
-		
+			
+			
+			
 			g.drawImage(muroDer, 700, y2,120,100, null);
 		}
 		g.drawImage(curvaDer, 690, 605,80,50, null);
-	//	g.drawImage(muroDer, 711, 90,100,80, null);
-}
+		//	g.drawImage(muroDer, 711, 90,100,80, null);
 	}
+}
