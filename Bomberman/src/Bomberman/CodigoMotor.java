@@ -45,7 +45,7 @@ public class CodigoMotor {
 	private JPanel panel = new JPanel();
 	private JFrame frame;
 	private int vidas=5;
-	private int tiempo=300, cuadritos=25, termino=0;
+	private int tiempo=305, cuadritos=25, termino=0;
 	private int puntaje=0;
 	private boolean isVisible = true;
 	private Font Vidas = new Font("impact", Font.PLAIN, 40);
@@ -221,8 +221,8 @@ public class CodigoMotor {
 	};*/
 
 	public CodigoMotor() {
-		initialize();//pagina de bienvenida
-		//initialize1();//pagina de  cuando inicia juego
+		initialize();//pagi
+		
 	}
 
 	public void crearBomba() {
@@ -1381,43 +1381,41 @@ public class CodigoMotor {
 			System.out.println(i+" ::: "+enemigos[i].direccion);
 		}*/
 	}
-	private void initialize1() {
-		
-		frame = new JFrame();
-		frame.setBounds(00, 0, limiteX, limiteY);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
 
-        login.add(new Menu());
-		
-		frame.getContentPane().add(login, BorderLayout.NORTH);
-		frame.getContentPane().revalidate();
-		frame.getContentPane().repaint();
-		
-	}
+	
 	private void initialize() {
 		
 		frame = new JFrame();
 		frame.setBounds(00, 0, limiteX, limiteY);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
-		/*
-		panel.setBackground(new Color(255, 128, 0));	
-		panel.add(tiempos);
-		panel.add(puntajes);
-	//	panel.add(new MyGraphics());
+		
+		login.add(new Menu());
+		frame.getContentPane().add(login, BorderLayout.NORTH);
+		
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask() {
+			int tik = 0;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if (tik == 0) {
+					tik = 1;
+				} else {
+					//timer.cancel();
+					// remove(gran_panel);
+					frame.getContentPane().remove(login);
+					frame.getContentPane().add(tablero, BorderLayout.NORTH);
+					
+					frame.getContentPane().revalidate();
+					frame.getContentPane().repaint();
+					
+				}
+			}
+		};
+		timer.schedule(task, 10, 5000);
 	
-		panel.add(Vidas);
-		*/
-	//	frame.getContentPane().add(panel, BorderLayout.NORTH);
-	//	tablero.setBackground(new Color(0, 0, 0));
-		
-		frame.getContentPane().remove(login);
-		frame.getContentPane().add(tablero, BorderLayout.NORTH);
-		
-		frame.getContentPane().revalidate();
-		frame.getContentPane().repaint();
-		
 		tablero.add(new MyGraphics());
 		
 		frame.addKeyListener(new KeyListener() {
@@ -1552,7 +1550,7 @@ public class CodigoMotor {
 	  	//cada 300 milisegundos va a cambiar la dieccion enemiga de algun enemigo
 	  	timer.schedule(cambiarDireccionEnemiga, 0, 300);
 	    timer.schedule(sumartiempo, 0, 1000);
-	    timer.schedule(sumartiempoBarra, 0, 12000);
+	    timer.schedule(sumartiempoBarra, 0, 12200);
 	    timer.schedule(moverBomba, 0, 200);
 	  	//timer.schedule(moverJugador, 0, 1);
 	}
@@ -1746,7 +1744,10 @@ public class CodigoMotor {
         	
         	
         	}
-        	////////////////se pregunta si se termino el tiempo
+        	
+        	
+        	
+        	////////////////se pregunta si se termino el tiempo...........
         	int calculo;
         	if(cuadritos == -1 && termino==0) {
         		JOptionPane.showMessageDialog(null, "Se acabo el tiempo perdiste...");
