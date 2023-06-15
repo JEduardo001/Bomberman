@@ -98,7 +98,6 @@ public class CodigoMotor implements Runnable {
 
 	//JUGADOR
 	static Image imagenJugador= Toolkit.getDefaultToolkit().getImage("bomEstaticoDer.png");
-	public static int g=50;
 	/* LO QUE REPRESENTA CADA DATO:
 	 * int x,int y,int largo,int alto,int direccion,int velocidad,Image imagen
 	 * 
@@ -238,7 +237,7 @@ public class CodigoMotor implements Runnable {
 					//preguntamos si hay un lugar disponible en el arreglo de bonus
 					if(bonus[i4]==null || bonus[i4].x==0) {
 						//esta variable es para generar aleatoriamente que tipo de bonus sera
-						int genTipoBonus = rand.nextInt(4);
+						int genTipoBonus = rand.nextInt(5);
 						
 
 						
@@ -262,7 +261,11 @@ public class CodigoMotor implements Runnable {
 							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("Patear.gif"),2);
 						break;
 						case 3:
-							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("llama.png"),3);
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("flamita.gif"),3);
+
+						break;
+						case 4:
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("reloj.gif"),4);
 
 						break;
 						
@@ -305,8 +308,34 @@ public class CodigoMotor implements Runnable {
 	public void sumartiempo() {
 		tiempo--;
 		
-		tiempos.setText("Tiempo:  "+tiempo);
-		puntajes.setText(puntaje+" pts");
+		if(tiempo-1<0) {
+			 int option = JOptionPane.showConfirmDialog(null, "¿Se acabo el tiempo!!,   Volver a Jugar?", "Salir", JOptionPane.YES_NO_OPTION);
+		        
+		        if (option == JOptionPane.NO_OPTION) {
+		            // Cerrar el juego si se selecciona "No"
+		            System.exit(0);
+		        }else if (option == JOptionPane.YES_OPTION) {
+		        	
+		        	jugador1.x=70;
+		        	jugador1.y=120;
+		        	jugador1.patearBomba=false;
+		        	jugador1.cantBombas=1;
+		        	vidas=5;
+		        	
+		        	tiempo=300;
+		        	generarMapa();
+					crearEnemigos();
+					borrarBonus();
+					
+					
+		        	
+		        }
+		        
+		}else {
+			tiempos.setText("Tiempo:  "+tiempo);
+			puntajes.setText(puntaje+" pts");
+			
+		}
 		
 		
 		
@@ -331,7 +360,7 @@ public class CodigoMotor implements Runnable {
 		            // Cerrar el juego si se selecciona "No"
 		            System.exit(0);
 		        }else if (option == JOptionPane.YES_OPTION) {
-		        	
+		        	vidas=5;
 		        	generarMapa();
 					crearEnemigos();
 					borrarBonus();
@@ -383,7 +412,7 @@ public class CodigoMotor implements Runnable {
 									///se reinicia puntaje a 0 y se pregunta
 									puntaje=0;
 									for(int f5=0;f5<4;f5++) {
-										//quitar enemigos de arriba y abajo por daño de la explocion 150 es el rango de explocion 
+										//quitar enemigos de arriba y abajo por daño de la explocion  
 										if(bombas[i3].y-rangoExplocion<=enemigos[f5].y && bombas[i3].y+rangoExplocion>=enemigos[f5].y && bombas[i3].x>=enemigos[f5].x && bombas[i3].x<=enemigos[f5].x+enemigos[f5].largo) {
 											
 											
@@ -503,31 +532,8 @@ public class CodigoMotor implements Runnable {
 		
 	}
 	public void generarMapa() {
-			
-		/*
-	   
-	    //Audio
-	    try {
-	        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Title.wav").getAbsoluteFile());
-	        Clip clip = AudioSystem.getClip();
-	        clip.open(audioInputStream);
-	        clip.loop(Clip.LOOP_CONTINUOUSLY);
-	    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-	         System.out.println("Error al reproducir el sonido.");
-	    }
 		
-		
-		 //Audio
-		try {
-		      AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Stage.wav").getAbsoluteFile());
-		      Clip clip = AudioSystem.getClip();
-		      clip.open(audioInputStream);
-		      clip.loop(Clip.LOOP_CONTINUOUSLY);
-		 } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-		       System.out.println("Error al reproducir el sonido.");
-		    }
-		    
-		 */
+		 
 		int cantBloquesIrrompibles=0;
 		boolean ponerMuroIrrompible=false;
 		int cantEspaciosVacios=0;
@@ -802,10 +808,6 @@ public class CodigoMotor implements Runnable {
 					
 					
 				}
-				
-			
-				
-				
 				
 					if(poderMoverJugador==false) {
 						break;
@@ -1192,6 +1194,10 @@ public class CodigoMotor implements Runnable {
 						 
 						
 						
+					break;
+						
+					case 4:
+						tiempo=300;
 					break;
 
 					}
@@ -1710,7 +1716,7 @@ public class CodigoMotor implements Runnable {
 		
 					}
 					if(e.getKeyCode()==10) {
-						g-=10;
+						
 						//System.out.println(g);
 						int bombasActivas=0;
 						//al poner una bomba primero comprobamos si puede poner una 
@@ -1826,6 +1832,7 @@ public class CodigoMotor implements Runnable {
    					
    			}
 
+   			
            
    			//pintar escenario de juego
    			
