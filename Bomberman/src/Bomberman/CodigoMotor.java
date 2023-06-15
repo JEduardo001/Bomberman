@@ -88,6 +88,9 @@ public class CodigoMotor implements Runnable {
 	Timer timer = new Timer();
 	int xEspacio=50,x=70,yEspacio=50,y=120;
 	public Mapa [][] mapa= new Mapa[10][15];
+	int enemigosRestantes=4;
+	
+	 
 
 	//portal de salida
 	int xPortalSiguienteNivel,yPortalSiguienteNivel,filaPortalSiguienteNivel,columnaPortalSiguienteNivel;
@@ -104,7 +107,7 @@ public class CodigoMotor implements Runnable {
 		DIRECCION:  0=arriba 1= abajo 2= derecha 3 = izquierda
 
 	 */                      //     0  1   2  3  4  5    6          7   8
-	Jugador jugador1 = new Jugador(70,120,40,40,0,50,imagenJugador,1,true,5);
+	Jugador jugador1 = new Jugador(70,120,40,40,0,50,imagenJugador,1,false,5);
 	
 	//BOMBA
 	static Image imagenBomba= Toolkit.getDefaultToolkit().getImage("bomba.gif");
@@ -117,6 +120,7 @@ public class CodigoMotor implements Runnable {
 	
 	//BONUS
 	Bonus bonus[]= new Bonus[15];
+	int rangoExplocion=80;
 
 	
 	
@@ -184,49 +188,7 @@ public class CodigoMotor implements Runnable {
        	
         }
 	};
-	/*int cont=0;
-	TimerTask moverJugador = new TimerTask() {
-        public void run() {
-        	
-        	if(cont<=0) {
-    			//cont=50;
-
-    		}else {
-    			if(moverJugador()) {
-    				cont--;
-            		switch(jugador1.direccion) {
-            		case 0:
-            			
-            			jugador1.y-=jugador1.velocidad;
-            		break;
-            		case 1:
-            			jugador1.y+=jugador1.velocidad;
-                	break;
-            		case 2:
-            			jugador1.x+=jugador1.velocidad;
-                	break;
-            		case 3:
-            			jugador1.x-=jugador1.velocidad;
-                	break;
-            		
-            		}
-					comprobarSiTomoBonus();
-
-            		//System.out.println("quite  "+cont+ " x: "+jugador1.x+" y:: "+jugador1.y);
-            	}else {
-            		cont=0;
-            	}
-    			
-
-    		}
-    		
-        	
-        		
-        		
-        	
-       	
-        }
-	};*/
+	
 
 	public CodigoMotor() {
 		initialize();//pagi
@@ -254,7 +216,7 @@ public class CodigoMotor implements Runnable {
 	
 			//esta varibale es para generar una probabilidad si es que va a haber un bonus o no
 			//int genBonus= rand.nextInt(6);
-			int genBonus=rand.nextInt(6);;
+			int genBonus=rand.nextInt(3);;
 			
 			
 			tracker = new MediaTracker(panel);
@@ -271,12 +233,12 @@ public class CodigoMotor implements Runnable {
 	        animationThread.start();
 			
 			
-			if(genBonus==5) {
+			if(genBonus==2) {
 				for(int i4=0;i4<bonus.length;i4++) {
 					//preguntamos si hay un lugar disponible en el arreglo de bonus
 					if(bonus[i4]==null || bonus[i4].x==0) {
 						//esta variable es para generar aleatoriamente que tipo de bonus sera
-						int genTipoBonus = rand.nextInt(5);
+						int genTipoBonus = rand.nextInt(4);
 						
 
 						
@@ -300,13 +262,10 @@ public class CodigoMotor implements Runnable {
 							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("Patear.gif"),2);
 						break;
 						case 3:
-							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("Velocidad.png"),3);
-
-						break;
-						case 4:
 							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("llama.png"),3);
 
 						break;
+						
 						
 						}
 						
@@ -384,36 +343,12 @@ public class CodigoMotor implements Runnable {
 	}
 	
 	public void explotarBomba() {
-		////////////////////////////////////
-		//for para las bombas
-		/*for(int i3=0;i3<bombas.length;i3++) {
-			try {
-				if(bombas[i3]!=null || bombas[i3].x!=0) {
-					//para quitar vidas al jugador
-				
-					if(bombas[i3].y-80<=jugador1.y && bombas[i3].y+80>=jugador1.y && bombas[i3].x>=jugador1.x && bombas[i3].x<=jugador1.x+jugador1.largo
-							&& jugador1.vidas >=1) {
-						
-						jugador1.vidas--;
-						i3=bombas.length+3;
-					}else {
-						//jugador1.x=-20;
-						//jugador1.y=-20;
-						
-					}
-				}
-			
-		}catch(Exception e) {
-			
-		}
-		}
-		///////////////////////////////////////
-		*/
+		
 		
 		//for para las bombas
 		for(int i3=0;i3<bombas.length;i3++) {
 			try {
-				if(bombas[i3]!=null || bombas[i3].x!=0) {
+				if(bombas[i3]!=null && bombas[i3].x!=0) {
 			
 					if(bombas[i3].tiempo==0) {
 						
@@ -449,7 +384,7 @@ public class CodigoMotor implements Runnable {
 									puntaje=0;
 									for(int f5=0;f5<4;f5++) {
 										//quitar enemigos de arriba y abajo por daño de la explocion 150 es el rango de explocion 
-										if(bombas[i3].y-80<=enemigos[f5].y && bombas[i3].y+80>=enemigos[f5].y && bombas[i3].x>=enemigos[f5].x && bombas[i3].x<=enemigos[f5].x+enemigos[f5].largo) {
+										if(bombas[i3].y-rangoExplocion<=enemigos[f5].y && bombas[i3].y+rangoExplocion>=enemigos[f5].y && bombas[i3].x>=enemigos[f5].x && bombas[i3].x<=enemigos[f5].x+enemigos[f5].largo) {
 											
 											
 											
@@ -473,10 +408,11 @@ public class CodigoMotor implements Runnable {
 											enemigos[f5].x=-20;
 											enemigos[f5].y=-20;
 											enemigos[f5].vida=0;	
+											 enemigosRestantes--;
 										}
 										
 										//quitar enemigos de derecha y izquierda por daño de la explocion 150 es el rango de explocion 
-										if(bombas[i3].y>=enemigos[f5].y && bombas[i3].y<=enemigos[f5].y+enemigos[f5].alto && bombas[i3].x+80>=enemigos[f5].x && bombas[i3].x-80<=enemigos[f5].x ) {
+										if(bombas[i3].y>=enemigos[f5].y && bombas[i3].y<=enemigos[f5].y+enemigos[f5].alto && bombas[i3].x+rangoExplocion>=enemigos[f5].x && bombas[i3].x-rangoExplocion<=enemigos[f5].x ) {
 											
 											// Reproducir sonido de muerte enemiga solo si no se ha reproducido antes
 						                    if (!enemigos[f5].sonidoReproducido) {
@@ -498,6 +434,8 @@ public class CodigoMotor implements Runnable {
 											enemigos[f5].x=-20;
 											enemigos[f5].y=-20;
 											enemigos[f5].vida=0;
+											 enemigosRestantes--;
+
 										}
 										//se hace conteo de enemigos muertos
 										if(enemigos[f5].vida==0) {
@@ -506,7 +444,7 @@ public class CodigoMotor implements Runnable {
 									}
 									
 									//quitar bloques de arriba y abajo por daño de la explocion 150 es el rango de explocion 
-									if(bombas[i3].y-80<=mapa[i][i2].y && bombas[i3].y+80>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
+									if(bombas[i3].y-rangoExplocion<=mapa[i][i2].y && bombas[i3].y+rangoExplocion>=mapa[i][i2].y && bombas[i3].x>=mapa[i][i2].x && bombas[i3].x<=mapa[i][i2].x+mapa[i][i2].largo) {
 										if(mapa[i][i2].tipoBloque!=3) {
 											genBonus(i,i2);
 										}
@@ -522,7 +460,7 @@ public class CodigoMotor implements Runnable {
 									}
 									
 									//quitar bloques de derecha y izquierda por daño de la explocion 150 es el rango de explocion 
-									if(bombas[i3].y>=mapa[i][i2].y && bombas[i3].y<=mapa[i][i2].y+mapa[i][i2].alto && bombas[i3].x+80>=mapa[i][i2].x && bombas[i3].x-80<=mapa[i][i2].x ) {
+									if(bombas[i3].y>=mapa[i][i2].y && bombas[i3].y<=mapa[i][i2].y+mapa[i][i2].alto && bombas[i3].x+rangoExplocion>=mapa[i][i2].x && bombas[i3].x-rangoExplocion<=mapa[i][i2].x ) {
 										if(mapa[i][i2].tipoBloque!=3) {
 											genBonus(i,i2);
 										}
@@ -702,7 +640,7 @@ public class CodigoMotor implements Runnable {
 							//arriba
 							case 0:
 								
-								if(jugador1.y-jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel) {
+								if(jugador1.y-jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel && enemigosRestantes<=0) {
 									if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
 										jugador1.x=70;
 										jugador1.y=120;
@@ -745,7 +683,7 @@ public class CodigoMotor implements Runnable {
 							case 1:
 								
 							
-								if(jugador1.y+jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel) {
+								if(jugador1.y+jugador1.velocidad==yPortalSiguienteNivel && jugador1.x==xPortalSiguienteNivel &&  enemigosRestantes<=0) {
 									if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
 										jugador1.x=70;
 										jugador1.y=120;
@@ -781,7 +719,7 @@ public class CodigoMotor implements Runnable {
 							//derecha
 							case 2:
 								
-								if(jugador1.y==yPortalSiguienteNivel && jugador1.x+jugador1.velocidad==xPortalSiguienteNivel) {
+								if(jugador1.y==yPortalSiguienteNivel && jugador1.x+jugador1.velocidad==xPortalSiguienteNivel &&  enemigosRestantes<=0) {
 									if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
 										jugador1.x=70;
 										jugador1.y=120;
@@ -820,7 +758,7 @@ public class CodigoMotor implements Runnable {
 							//izquierda
 							case 3:
 								
-								if(jugador1.y==yPortalSiguienteNivel && jugador1.x-jugador1.velocidad==xPortalSiguienteNivel) {
+								if(jugador1.y==yPortalSiguienteNivel && jugador1.x-jugador1.velocidad==xPortalSiguienteNivel &&  enemigosRestantes<=0) {
 									if(mapa[i][i2].x==0 && mapa[i][i2].tipoBloque==3) {
 										jugador1.x=70;
 										jugador1.y=120;
@@ -1156,107 +1094,7 @@ public class CodigoMotor implements Runnable {
 			
 		
 	}
-	/*public boolean patearBomba() {
-		boolean moverBomba=false,hayBomba=false;
-		if(jugador1.patearBomba==true) {
-			
-			
-			
-					
-
-					if(hayBomba==true) {
-						
-					
-							
-							for(int fila=0;fila<10;fila++) {
-								for(int columna=0;columna<13;columna++) {
-									if(mapa[fila][columna].tipoBloque!=0) {
-										
-										switch(jugador1.direccion) {
-										case 0:
-											if(bombas[i].y-50==mapa[fila][columna].y && bombas[i].x==mapa[fila][columna].x || bombas[i].y-50<100) {
-												moverBomba=false;
-											}else {
-												moverBomba=true;
-											}
-										break;
-										
-										case 1:
-											if(bombas[i].y+50==mapa[fila][columna].y && bombas[i].x==mapa[fila][columna].x || bombas[i].y+50>limiteY-90) {
-												moverBomba=false;
-											}else {
-												moverBomba=true;
-											}
-										break;
-										case 2:
-											if(bombas[i].x+50==mapa[fila][columna].x && bombas[i].y==mapa[fila][columna].y || bombas[i].x+50>limiteX-80) {
-												moverBomba=false;
-											}else {
-												moverBomba=true;
-											}
-										break;
-										case 3:
-											
-											if(bombas[i].x-50==mapa[fila][columna].x && bombas[i].y==mapa[fila][columna].y || bombas[i].x-50<50) {
-												moverBomba=false;
-											}else {
-												moverBomba=true;
-											}
-										break;
-										}
-										
-									}else {
-										moverBomba=true;
-									}
-									
-									if(moverBomba==false) {
-										break;
-									}
-								
-								}
-								if(moverBomba==false) {
-									break;
-								}
-							}
-							
-							
-							
-							if(moverBomba==true) {
-								switch(jugador1.direccion) {
-								case 0:
-									bombas[i].y-=50;
-								break;
-								case 1:
-									bombas[i].y+=50;
-
-								break;
-								case 2:
-									bombas[i].x+=50;
-
-								break;
-								case 3:
-									bombas[i].x-=50;
-
-								break;
-								}
-							}
-						
-						
-					}
-					
 	
-				}catch(Exception e) {
-					
-				}
-				
-			
-			
-		
-		}
-		
-		return moverBomba;
-		
-	}*/
 	public void comprobarSiTomoBonus() {
 		for(int i=0;i<bonus.length;i++) {
 			try {
@@ -1299,6 +1137,8 @@ public class CodigoMotor implements Runnable {
 					case 1:
 						
 						jugador1.cantBombas=0;
+						rangoExplocion=80;
+						jugador1.patearBomba=false;
 						 ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 						executor.schedule(activarBomba, 5, TimeUnit.SECONDS);
 						
@@ -1338,14 +1178,7 @@ public class CodigoMotor implements Runnable {
 					
 					case 3:
 						
-						if(jugador1.velocidad+10<=100) {
-								if(jugador1.velocidad+1<=3) {
-									//jugador1.velocidad++;
-
-								}
-
-						}
-						
+						rangoExplocion=150;
 						//Audio
 						 try {
 						        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("item-get.wav").getAbsoluteFile());
@@ -1406,6 +1239,13 @@ public class CodigoMotor implements Runnable {
 							for(int columnas=0;columnas<13;columnas++) {
 								//si el tipo de bloque es 0 quiere decir que es el bloque que es invisible osea el espacio vacio tonses ahi creamos al enemigo
 								if(mapa[fila][columnas].tipoBloque==0 ) {
+									
+									if(rand.nextInt(2)==0) {
+										imagenEnemigo=Toolkit.getDefaultToolkit().getImage("enemigo2.gif");
+									}else {
+										imagenEnemigo=Toolkit.getDefaultToolkit().getImage("enemigo1.gif");
+
+									}
 									if(espacioVacio-1<=0) {
 										enemigos[i]= new Enemigos(mapa[fila][columnas].x,mapa[fila][columnas].y,40,40,rand.nextInt(3),50,2,imagenEnemigo);
 										enemigosGenerados++;
@@ -1427,6 +1267,7 @@ public class CodigoMotor implements Runnable {
 
 						
 			}
+			enemigosRestantes=4;
 					
 				
 			
@@ -1462,7 +1303,7 @@ public class CodigoMotor implements Runnable {
                             System.out.println("Error al reproducir el sonido.");
                         }
                   
-				vidas=vidas-1;
+				//vidas=vidas-1;
 				
 						jugador1.x=70;
 						jugador1.y=120;  
@@ -1646,6 +1487,12 @@ public class CodigoMotor implements Runnable {
 								break;
 								
 							  }
+								
+								if(moverEnemigo==false) {
+									filas=10;
+									columnas=13;
+									b=10;
+								}
 							}catch(Exception e) {
 								//System.out.println("Error : por que el arreglo de las bombas y enemigos no esta lleno y al momento de acceder a una poscion vacia da error"+e);
 							}
@@ -1769,6 +1616,8 @@ public class CodigoMotor implements Runnable {
 						         System.out.println("Error al reproducir el sonido.");
 						    }
 						
+							jugador1.imagen= Toolkit.getDefaultToolkit().getImage("atras.png");
+
 						jugador1.direccion=0;
 						
 							if(jugador1.y-jugador1.velocidad>100 && moverJugador() ) {
@@ -1791,7 +1640,8 @@ public class CodigoMotor implements Runnable {
 						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
 						         System.out.println("Error al reproducir el sonido.");
 						    }
-						
+							jugador1.imagen= Toolkit.getDefaultToolkit().getImage("enfrente.png");
+
 						jugador1.direccion=1;
 					
 							if(jugador1.y+40+jugador1.velocidad<limiteY-40 && moverJugador()) {
@@ -1815,6 +1665,8 @@ public class CodigoMotor implements Runnable {
 						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
 						         System.out.println("Error al reproducir el sonido.");
 						    }
+							jugador1.imagen= Toolkit.getDefaultToolkit().getImage("BombIzq.png");
+
 						
 						
 						jugador1.direccion=3;
@@ -1841,8 +1693,9 @@ public class CodigoMotor implements Runnable {
 						        clip.start();
 						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
 						         System.out.println("Error al reproducir el sonido.");
-						    }
-						
+						    }							
+						 jugador1.imagen= Toolkit.getDefaultToolkit().getImage("bomEstaticoDer.png");
+
 						jugador1.direccion=2;
 						
 						if(jugador1.x+40+jugador1.velocidad<limiteX-40 && moverJugador()) {
