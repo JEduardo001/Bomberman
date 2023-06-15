@@ -37,7 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
-public class CodigoMotor {
+public class CodigoMotor implements Runnable {
 
 	private JLabel puntajes = new JLabel();
 	
@@ -48,6 +48,10 @@ public class CodigoMotor {
 	private int tiempo=305, cuadritos=25, termino=0;
 	private int puntaje=0;
 	private boolean isVisible = true;
+	 private boolean isRunning = false;
+	private Image powerReloj,powerPatear;
+	 private MediaTracker tracker;
+	 private int frameIndex = 0;
 	private Font Vidas = new Font("impact", Font.PLAIN, 40);
 	private Font Score = new Font("impact", Font.PLAIN, 40);
 	private Font Puntaje = new Font("impact", Font.PLAIN, 38);
@@ -68,6 +72,10 @@ public class CodigoMotor {
 	Image nube1 = Toolkit.getDefaultToolkit().getImage("nube1.png");
 	Image nube2 = Toolkit.getDefaultToolkit().getImage("nube2.png");
 	Image zepelin = Toolkit.getDefaultToolkit().getImage("zepelin.png");
+	Image calavera = Toolkit.getDefaultToolkit().getImage("calavera.png");
+	Image powerBomb = Toolkit.getDefaultToolkit().getImage("PowerBomb.gif");
+	Image portal = Toolkit.getDefaultToolkit().getImage("portal.png");
+//	Image enemigo1 = Toolkit.getDefaultToolkit().getImage("enemigo1.gif");
 
 
 	//juego
@@ -86,7 +94,7 @@ public class CodigoMotor {
 
 
 	//JUGADOR
-	static Image imagenJugador= Toolkit.getDefaultToolkit().getImage("personaje1.png");
+	static Image imagenJugador= Toolkit.getDefaultToolkit().getImage("bomEstaticoDer.png");
 	public static int g=50;
 	/* LO QUE REPRESENTA CADA DATO:
 	 * int x,int y,int largo,int alto,int direccion,int velocidad,Image imagen
@@ -99,12 +107,12 @@ public class CodigoMotor {
 	Jugador jugador1 = new Jugador(70,120,40,40,0,50,imagenJugador,1,true,5);
 	
 	//BOMBA
-	static Image imagenBomba= Toolkit.getDefaultToolkit().getImage("Bomba.png");
+	static Image imagenBomba= Toolkit.getDefaultToolkit().getImage("bomba.gif");
 	Bomba bombas[] = new Bomba[10];
 	
 	//ENEMIGOS 
 	Enemigos enemigos[]= new Enemigos[4];
-	static Image imagenEnemigo= Toolkit.getDefaultToolkit().getImage("enemigo.png");
+	static Image imagenEnemigo= Toolkit.getDefaultToolkit().getImage("enemigo2.gif");
 	boolean moverEnemigo=true;
 	
 	//BONUS
@@ -247,7 +255,22 @@ public class CodigoMotor {
 			//esta varibale es para generar una probabilidad si es que va a haber un bonus o no
 			//int genBonus= rand.nextInt(6);
 			int genBonus=rand.nextInt(6);;
-
+			
+			
+			tracker = new MediaTracker(panel);
+	        tracker.addImage(powerBomb, 0);
+	        try {
+	            tracker.waitForAll();
+	        } catch (InterruptedException ex) {
+	            ex.printStackTrace();
+	        }
+	        
+	        // Comienza la animación
+	        isRunning = true;
+	        Thread animationThread = new Thread(this);
+	        animationThread.start();
+			
+			
 			if(genBonus==5) {
 				for(int i4=0;i4<bonus.length;i4++) {
 					//preguntamos si hay un lugar disponible en el arreglo de bonus
@@ -267,14 +290,14 @@ public class CodigoMotor {
 						 */
 						switch(genTipoBonus) {
 						case 0:
-							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("PonerMasBombas.png"),0);
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,powerBomb,0);
 						break;
 						case 1:
-							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("Malo.png"),1);
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,calavera,1);
 
 						break;
 						case 2:
-							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("PatearBomba.png"),2);
+							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("Patear.gif"),2);
 						break;
 						case 3:
 							bonus[i4]= new Bonus(mapa[i][i2].x,mapa[i][i2].y,40,40,Toolkit.getDefaultToolkit().getImage("Velocidad.png"),3);
@@ -294,6 +317,21 @@ public class CodigoMotor {
 			}
 		
 	}
+	
+	 public void run() {
+	        while (isRunning) {
+	            // Actualiza el índice del frame y repinta el JPanel
+	            frameIndex = (frameIndex + 1) % powerBomb.getWidth(panel);
+	            panel.repaint();
+	            
+	            // Espera 100 milisegundos antes de mostrar el siguiente frame
+	            try {
+	                Thread.sleep(100);
+	            } catch (InterruptedException ex) {
+	                ex.printStackTrace();
+	            }
+	        }
+	    }
 	
 	public void borrarBonus() {
 		for(int i=0;i<bonus.length;i++) {
@@ -1940,7 +1978,8 @@ public class CodigoMotor {
    	      					
    	   						
    	   	   						g.setColor(Color.yellow);
-   	   	   			   			g.fill3DRect(xPortalSiguienteNivel, yPortalSiguienteNivel, 40,40, true);
+   	   	   						
+   	   	   			   			g.drawImage(portal,xPortalSiguienteNivel, yPortalSiguienteNivel, 40,40, null);
 		
    	      				}
    					}
@@ -2239,6 +2278,7 @@ public class CodigoMotor {
 			g.drawImage(muroDer, 700, y2,120,100, null);
 		}
 		g.drawImage(curvaDer, 690, 605,80,50, null);
+	//	g.drawImage(LL, 250, 250,80,50, null);
 		//	g.drawImage(muroDer, 711, 90,100,80, null);
 	}
 }
