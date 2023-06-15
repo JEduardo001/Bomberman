@@ -3,6 +3,8 @@ package Bomberman;
 import java.awt.Image;
 
 public class Bomba {
+	public boolean sonidoReproducidoPatearBomba = false;
+	public boolean sonidoReproducido = false;
 	int x,y,largo,alto,tiempo,direccion;
 	boolean moverBomba;
 	Image imagen;

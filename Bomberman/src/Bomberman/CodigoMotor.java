@@ -357,6 +357,23 @@ public class CodigoMotor {
 			
 					if(bombas[i3].tiempo==0) {
 						
+						// Reproducir sonido de explosión solo si no se ha reproducido antes
+	                    if (!bombas[i3].sonidoReproducido) {
+	                        try {
+	                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("bomb-explodes.wav").getAbsoluteFile());
+	                            Clip clip = AudioSystem.getClip();
+	                            clip.open(audioInputStream);
+	                            clip.start();
+	                            
+	                            // Marcar el sonido como reproducido
+	                            bombas[i3].sonidoReproducido = true;
+	                        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+	                            System.out.println("Error al reproducir el sonido.");
+	                        }
+	                    }
+						
+						
+						
 						//for para las filas
 						for(int i=0;i<10;i++) {
 							
@@ -373,6 +390,26 @@ public class CodigoMotor {
 									for(int f5=0;f5<4;f5++) {
 										//quitar enemigos de arriba y abajo por daño de la explocion 150 es el rango de explocion 
 										if(bombas[i3].y-80<=enemigos[f5].y && bombas[i3].y+80>=enemigos[f5].y && bombas[i3].x>=enemigos[f5].x && bombas[i3].x<=enemigos[f5].x+enemigos[f5].largo) {
+											
+											
+											
+											// Reproducir sonido de muerte enemiga solo si no se ha reproducido antes
+						                    if (!enemigos[f5].sonidoReproducido) {
+						                        try {
+						                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("enemy-dies.wav").getAbsoluteFile());
+						                            Clip clip = AudioSystem.getClip();
+						                            clip.open(audioInputStream);
+						                            clip.start();
+						                            
+						                            // Marcar el sonido como reproducido
+						                            enemigos[f5].sonidoReproducido = true;
+						                        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						                            System.out.println("Error al reproducir el sonido.");
+						                        }
+						                  }
+											
+											
+											
 											enemigos[f5].x=-20;
 											enemigos[f5].y=-20;
 											enemigos[f5].vida=0;	
@@ -380,6 +417,24 @@ public class CodigoMotor {
 										
 										//quitar enemigos de derecha y izquierda por daño de la explocion 150 es el rango de explocion 
 										if(bombas[i3].y>=enemigos[f5].y && bombas[i3].y<=enemigos[f5].y+enemigos[f5].alto && bombas[i3].x+80>=enemigos[f5].x && bombas[i3].x-80<=enemigos[f5].x ) {
+											
+											// Reproducir sonido de muerte enemiga solo si no se ha reproducido antes
+						                    if (!enemigos[f5].sonidoReproducido) {
+						                        try {
+						                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("enemy-dies.wav").getAbsoluteFile());
+						                            Clip clip = AudioSystem.getClip();
+						                            clip.open(audioInputStream);
+						                            clip.start();
+						                            
+						                            // Marcar el sonido como reproducido
+						                            enemigos[f5].sonidoReproducido = true;
+						                        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						                            System.out.println("Error al reproducir el sonido.");
+						                        }
+						                  }
+											
+											
+											
 											enemigos[f5].x=-20;
 											enemigos[f5].y=-20;
 											enemigos[f5].vida=0;
@@ -450,6 +505,31 @@ public class CodigoMotor {
 		
 	}
 	public void generarMapa() {
+			
+		/*
+	   
+	    //Audio
+	    try {
+	        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Title.wav").getAbsoluteFile());
+	        Clip clip = AudioSystem.getClip();
+	        clip.open(audioInputStream);
+	        clip.loop(Clip.LOOP_CONTINUOUSLY);
+	    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+	         System.out.println("Error al reproducir el sonido.");
+	    }
+		
+		
+		 //Audio
+		try {
+		      AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Stage.wav").getAbsoluteFile());
+		      Clip clip = AudioSystem.getClip();
+		      clip.open(audioInputStream);
+		      clip.loop(Clip.LOOP_CONTINUOUSLY);
+		 } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+		       System.out.println("Error al reproducir el sonido.");
+		    }
+		    
+		 */
 		int cantBloquesIrrompibles=0;
 		boolean ponerMuroIrrompible=false;
 		int cantEspaciosVacios=0;
@@ -521,6 +601,7 @@ public class CodigoMotor {
 			x=70;
 			cantBloquesIrrompibles=0;
 			ponerMuroIrrompible=false;
+			
 		}
 	
 		//preguntamos si la cantidad deespacios vacios generados es menor a 0, para evitar error al momento de generar lo enemigos
@@ -539,6 +620,7 @@ public class CodigoMotor {
 				}
 			}
 		}
+		
 	}
 	
 	
@@ -850,6 +932,24 @@ public class CodigoMotor {
 												moverBomba=false;
 											}else {
 												moverBomba=true;
+												
+												// Reproducir sonido de explosión solo si no se ha reproducido antes
+							                    if (!bombas[i].sonidoReproducidoPatearBomba) {
+							                        try {
+							                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("punch-bomb.wav").getAbsoluteFile());
+							                            Clip clip = AudioSystem.getClip();
+							                            clip.open(audioInputStream);
+							                            clip.start();
+							                            
+							                            // Marcar el sonido como reproducido
+							                            bombas[i].sonidoReproducidoPatearBomba = true;
+							                        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+							                            System.out.println("Error al reproducir el sonido.");
+							                        }
+							                  }
+												
+												
+												
 											}
 												
 											
@@ -864,6 +964,22 @@ public class CodigoMotor {
 											}else {
 												moverBomba=true;
 
+												// Reproducir sonido de explosión solo si no se ha reproducido antes
+							                    if (!bombas[i].sonidoReproducidoPatearBomba) {
+							                        try {
+							                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("punch-bomb.wav").getAbsoluteFile());
+							                            Clip clip = AudioSystem.getClip();
+							                            clip.open(audioInputStream);
+							                            clip.start();
+							                            
+							                            // Marcar el sonido como reproducido
+							                            bombas[i].sonidoReproducidoPatearBomba = true;
+							                        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+							                            System.out.println("Error al reproducir el sonido.");
+							                        }
+							                  }
+												
+							                    
 
 											}
 									
@@ -875,6 +991,25 @@ public class CodigoMotor {
 												moverBomba=false;
 											}else {
 												moverBomba=true;
+												
+												
+												// Reproducir sonido de explosión solo si no se ha reproducido antes
+							                    if (!bombas[i].sonidoReproducidoPatearBomba) {
+							                        try {
+							                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("punch-bomb.wav").getAbsoluteFile());
+							                            Clip clip = AudioSystem.getClip();
+							                            clip.open(audioInputStream);
+							                            clip.start();
+							                            
+							                            // Marcar el sonido como reproducido
+							                            bombas[i].sonidoReproducidoPatearBomba = true;
+							                        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+							                            System.out.println("Error al reproducir el sonido.");
+							                        }
+							                  }
+												
+												
+												
 											}
 										
 										break;
@@ -885,6 +1020,23 @@ public class CodigoMotor {
 												moverBomba=false;
 											}else {
 												moverBomba=true;
+												
+												// Reproducir sonido de explosión solo si no se ha reproducido antes
+							                    if (!bombas[i].sonidoReproducidoPatearBomba) {
+							                        try {
+							                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("punch-bomb.wav").getAbsoluteFile());
+							                            Clip clip = AudioSystem.getClip();
+							                            clip.open(audioInputStream);
+							                            clip.start();
+							                            
+							                            // Marcar el sonido como reproducido
+							                            bombas[i].sonidoReproducidoPatearBomba = true;
+							                        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+							                            System.out.println("Error al reproducir el sonido.");
+							                        }
+							                  }
+												
+												
 
 											}
 										
@@ -1065,20 +1217,67 @@ public class CodigoMotor {
 						 * 
 					 */
 					switch(bonus[i].tipoBonus) {
+					
 					case 0:
+						
+						
+						//Audio
+						 try {
+						        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("item-get.wav").getAbsoluteFile());
+						        Clip clip = AudioSystem.getClip();
+						        clip.open(audioInputStream);
+						        clip.start();
+						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						         System.out.println("Error al reproducir el sonido.");
+						    }
+						
+						
 						jugador1.cantBombas++;
+						
 					break;
+					
 					case 1:
+						
 						jugador1.cantBombas=0;
 						 ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 						executor.schedule(activarBomba, 5, TimeUnit.SECONDS);
 						
 						 executor.shutdown();
+						 						
+						 
+						 //Audio
+						 try {
+						        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("item-get.wav").getAbsoluteFile());
+						        Clip clip = AudioSystem.getClip();
+						        clip.open(audioInputStream);
+						        clip.start();
+						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						         System.out.println("Error al reproducir el sonido.");
+						    }
+						 
+						 
 					break;
+					
+					
 					case 2:
+						
+						//Audio
+						 try {
+						        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("item-get.wav").getAbsoluteFile());
+						        Clip clip = AudioSystem.getClip();
+						        clip.open(audioInputStream);
+						        clip.start();
+						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						         System.out.println("Error al reproducir el sonido.");
+						    }
+						
+						
 						jugador1.patearBomba=true;
+						
 					break;
+					
 					case 3:
+						
 						if(jugador1.velocidad+10<=100) {
 								if(jugador1.velocidad+1<=3) {
 									//jugador1.velocidad++;
@@ -1086,6 +1285,20 @@ public class CodigoMotor {
 								}
 
 						}
+						
+						//Audio
+						 try {
+						        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("item-get.wav").getAbsoluteFile());
+						        Clip clip = AudioSystem.getClip();
+						        clip.open(audioInputStream);
+						        clip.start();
+						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						         System.out.println("Error al reproducir el sonido.");
+						    }
+						 
+						 
+						
+						
 					break;
 
 					}
@@ -1175,7 +1388,28 @@ public class CodigoMotor {
 				//evaluamos si las cordenadas dele enmigo son igual a las del jugador
 				if(jugador1.x==enemigos[i].x && jugador1.y==enemigos[i].y) {
 					if(vidas-1>=0) {
-						//vidas--;
+
+
+						try {
+                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("bomberman-dies.wav").getAbsoluteFile());
+                            Clip clip = AudioSystem.getClip();
+                            clip.open(audioInputStream);
+                            clip.start();
+                            
+                          
+           
+                        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+                            System.out.println("Error al reproducir el sonido.");
+                        }
+                  
+				vidas=vidas-1;
+				
+						jugador1.x=70;
+						jugador1.y=120;  
+						
+						
+						
+						
 						
 					}else {
 						gameOver=true;
@@ -1384,7 +1618,9 @@ public class CodigoMotor {
 
 	
 	private void initialize() {
-		
+
+		 
+		 
 		frame = new JFrame();
 		frame.setBounds(00, 0, limiteX, limiteY);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1392,6 +1628,9 @@ public class CodigoMotor {
 		
 		login.add(new Menu());
 		frame.getContentPane().add(login, BorderLayout.NORTH);
+		
+		
+		
 		
 		Timer timer = new Timer();
 		TimerTask task = new TimerTask() {
@@ -1408,6 +1647,7 @@ public class CodigoMotor {
 					frame.getContentPane().remove(login);
 					frame.getContentPane().add(tablero, BorderLayout.NORTH);
 					
+					 
 					frame.getContentPane().revalidate();
 					frame.getContentPane().repaint();
 					
@@ -1440,6 +1680,17 @@ public class CodigoMotor {
 					//cont=50;
 					//arriba
 					if(e.getKeyCode()==87) {
+						
+						//Audio
+						 try {
+						        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("walking.wav").getAbsoluteFile());
+						        Clip clip = AudioSystem.getClip();
+						        clip.open(audioInputStream);
+						        clip.start();
+						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						         System.out.println("Error al reproducir el sonido.");
+						    }
+						
 						jugador1.direccion=0;
 						
 							if(jugador1.y-jugador1.velocidad>100 && moverJugador() ) {
@@ -1452,6 +1703,17 @@ public class CodigoMotor {
 					}
 					//abajo
 					if(e.getKeyCode()==83) {
+						
+						//Audio
+						 try {
+						        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("walking.wav").getAbsoluteFile());
+						        Clip clip = AudioSystem.getClip();
+						        clip.open(audioInputStream);
+						        clip.start();
+						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						         System.out.println("Error al reproducir el sonido.");
+						    }
+						
 						jugador1.direccion=1;
 					
 							if(jugador1.y+40+jugador1.velocidad<limiteY-40 && moverJugador()) {
@@ -1465,6 +1727,18 @@ public class CodigoMotor {
 					}
 					//izquierda
 					if(e.getKeyCode()==65) {
+						
+						//Audio
+						 try {
+						        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("walking.wav").getAbsoluteFile());
+						        Clip clip = AudioSystem.getClip();
+						        clip.open(audioInputStream);
+						        clip.start();
+						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						         System.out.println("Error al reproducir el sonido.");
+						    }
+						
+						
 						jugador1.direccion=3;
 						
 						if(jugador1.x-jugador1.velocidad>50 && moverJugador()) {
@@ -1479,6 +1753,17 @@ public class CodigoMotor {
 					}
 					//derecha
 					if(e.getKeyCode()==68) {
+						
+						
+						//Audio
+						 try {
+						        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("walking.wav").getAbsoluteFile());
+						        Clip clip = AudioSystem.getClip();
+						        clip.open(audioInputStream);
+						        clip.start();
+						    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+						         System.out.println("Error al reproducir el sonido.");
+						    }
 						
 						jugador1.direccion=2;
 						
@@ -1511,6 +1796,18 @@ public class CodigoMotor {
 						}
 						
 						if(bombasActivas<jugador1.cantBombas) {
+							
+							//Audio
+							 try {
+							        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("place-bomb.wav").getAbsoluteFile());
+							        Clip clip = AudioSystem.getClip();
+							        clip.open(audioInputStream);
+							        clip.start();
+							    } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+							         System.out.println("Error al reproducir el sonido.");
+							    }
+							
+							
 							crearBomba();
 
 						}
@@ -1538,6 +1835,8 @@ public class CodigoMotor {
 				
 				
 			}});
+		
+
 		
 		generarMapa();
 		crearEnemigos();
@@ -1847,7 +2146,7 @@ public class CodigoMotor {
 			setSize(780, 700);
 			setLayout(null);
 			setLocation(100, 100);
-			
+
 			//Color personalizado
 			
 			

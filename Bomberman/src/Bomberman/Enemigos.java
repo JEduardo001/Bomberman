@@ -3,6 +3,7 @@ package Bomberman;
 import java.awt.Image;
 
 public class Enemigos {
+	public boolean sonidoReproducido = false;
 	int x,y,largo,alto,direccion,velocidad,vida;
 	Image imagen;
 	
