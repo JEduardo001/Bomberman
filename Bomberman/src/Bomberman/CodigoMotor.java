@@ -361,6 +361,28 @@ public class CodigoMotor implements Runnable {
 	
 	}
 	
+	
+	public void continuar() {
+		if (vidas==0) {
+			
+			
+			 int option = JOptionPane.showConfirmDialog(null, "¿Deseas continuar ?", "Salir", JOptionPane.YES_NO_OPTION);
+		        
+		        if (option == JOptionPane.NO_OPTION) {
+		            // Cerrar el juego si se selecciona "No"
+		            System.exit(0);
+		        }else if (option == JOptionPane.YES_OPTION) {
+		        	
+		        	generarMapa();
+					crearEnemigos();
+					borrarBonus();
+		        	
+		        }
+		}
+		
+		
+	}
+	
 	public void explotarBomba() {
 		////////////////////////////////////
 		//for para las bombas
@@ -1449,8 +1471,26 @@ public class CodigoMotor implements Runnable {
 						
 						
 						
+						
 					}else {
 						gameOver=true;
+						if (gameOver==true) {
+							int option = JOptionPane.showConfirmDialog(null, "¿Deseas volver a jugar ?", "Salir", JOptionPane.YES_NO_OPTION);
+					        
+					        if (option == JOptionPane.NO_OPTION) {
+					            // Cerrar el juego si se selecciona "No"
+					            System.exit(0);
+					        }else if (option == JOptionPane.YES_OPTION) {
+					        	jugador1.x=70;
+								jugador1.y=120;
+								generarMapa();
+								crearEnemigos();
+								borrarBonus();
+								gameOver=false;
+								vidas=5;
+					        }
+						}
+						
 						System.out.println("GAME OVER LINEA 1153");
 					}
 				}
