@@ -29,6 +29,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -146,6 +147,7 @@ public class CodigoMotor implements Runnable {
         	
          }
 	};
+	
 	TimerTask sumartiempo = new TimerTask() {
         public void run() {
        	 sumartiempo();
@@ -371,6 +373,7 @@ public class CodigoMotor implements Runnable {
 		
 	}
 	
+	
 	public void explotarBomba() {
 		
 		
@@ -541,8 +544,8 @@ public class CodigoMotor implements Runnable {
 		y=120;
 		//generamos la posicion en donde va a estar el portal para pasar al siguiente nivel
 		filaPortalSiguienteNivel=rand.nextInt(10);
-		columnaPortalSiguienteNivel=rand.nextInt(13);
-		
+		columnaPortalSiguienteNivel=rand.nextInt((13-4+1)+4);
+		//System.out.println(rand.nextInt((13-4+1)+4));
 		
 		for(int i=0;i<10;i++) {
 			// selaguea por que al generar enermigos no hay suficiente cantidad de espacios vacios pa generarlos
@@ -1242,7 +1245,7 @@ public class CodigoMotor implements Runnable {
 							
 							espacioVacio=rand.nextInt(buscarCantidadEspaciosVacios(fila));
 							
-							for(int columnas=0;columnas<13;columnas++) {
+							for(int columnas=4;columnas<13;columnas++) {
 								//si el tipo de bloque es 0 quiere decir que es el bloque que es invisible osea el espacio vacio tonses ahi creamos al enemigo
 								if(mapa[fila][columnas].tipoBloque==0 ) {
 									
@@ -1782,6 +1785,7 @@ public class CodigoMotor implements Runnable {
 		
 		//tiempos 1500
 	  	timer.schedule(explotarBomba, 0, 1);
+	  
 	  	timer.schedule(moverEnemigos, 0, 200);
 	  	//cada 300 milisegundos va a cambiar la dieccion enemiga de algun enemigo
 	  	timer.schedule(cambiarDireccionEnemiga, 0, 300);
